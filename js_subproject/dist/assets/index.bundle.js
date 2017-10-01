@@ -9028,8 +9028,8 @@ var svg = containerDiv.append('svg').attr('width', width).attr('height', height)
 
 var plot = svg.append('g').attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
 var simulation = d3.forceSimulation().force('link', d3.forceLink().id(function (d) {
-    return d.displayName;
-})).force('charge', d3.forceManyBody().strength(-0.3)).force('center', d3.forceCenter(width / 2, height / 2));
+    return d.number;
+}).distance(5).strength(0.5)).force('charge', d3.forceManyBody().strength(-3)).force('center', d3.forceCenter(width / 2, height / 2)).force("x", d3.forceX()).force("y", d3.forceY());
 
 d3.csv('./data/split_spouses.csv', parse, function (err, data) {
     if (err) {
@@ -9037,24 +9037,23 @@ d3.csv('./data/split_spouses.csv', parse, function (err, data) {
         return;
     }
     console.log(data[0]);
-    var links = createNetwork(data);
+    var network = createNetwork(data);
 
-    console.log(links);
+    console.log(network);
 
-    simulation.nodes(data).on('tick', ticked);
+    simulation.nodes(network.nodes).on('tick', ticked);
 
-    simulation.force('link').links(links);
+    simulation.force('link').links(network.links);
 
-    var link = svg.append('g').attr('class', 'links').selectAll('line').data(links).enter().append('line').attr('stroke-width', 1).attr('stroke', 'grey').attr('stroke-dasharray', function (d) {
+    var link = svg.append('g').attr('class', 'links').selectAll('line').data(network.links).enter().append('line').attr('stroke-width', 1).attr('stroke', 'grey').attr('stroke-dasharray', function (d) {
         return d.involvement ? '5, 5' : null;
     });
 
-    var node = svg.append('g').attr('class', 'nodes').selectAll('circle').data(data.filter(function (d) {
+    var node = svg.append('g').attr('class', 'nodes').selectAll('circle').data(network.nodes.filter(function (d) {
         return d.entityType.toLowerCase().trim() === 'person';
-    })).enter().append('circle').attr('r', 2.5);
-    // .attr('fill', function (d) { return color(d.group) })
+    })).enter().append('circle').attr('r', 2.5).attr('fill', 'rgb(175, 51, 53)');
 
-    var rectNode = svg.append('g').attr('class', 'nodes').selectAll('rect').data(data.filter(function (d) {
+    var rectNode = svg.append('g').attr('class', 'nodes').selectAll('rect').data(network.nodes.filter(function (d) {
         return d.entityType.toLowerCase().trim() !== 'person';
     })).enter().append('rect').attr('width', 5).attr('height', 5);
 
@@ -9098,44 +9097,80 @@ function parse(row) {
 }
 
 function createNetwork(data) {
-    var namesSet = new Set(data.map(function (d) {
-        return d.displayName;
-    }));
-    var set = new Set();
-    var links = [];
+    var receivers = new Set(),
+        givers = new Set();
+    var giveToData = {},
+        receiveFromData = {};
+    var links = [],
+        nodes = {};
 
-    var checkOccurance = function checkOccurance(d, row) {
-        var involvement = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-        if (!(set.has(d + '---' + row.displayName) || set.has(row.displayName + '---' + d))) {
-            // if the name and giveTo name don't (!) exist in the set
-            if (!namesSet.has(row.displayName) || !namesSet.has(d)) {
-                return;
-            }
-
-            set.add(d + '---' + row.displayName);
-            links.push({ source: row.displayName, target: d, involvement: involvement });
-        }
-    };
-
-    var _loop = function _loop(i) {
-        var row = data[i];
-        row.giveTo.forEach(function (d) {
-            checkOccurance(d, row);
+    data.forEach(function (d) {
+        d.giveTo.forEach(function (e) {
+            return receivers.add(e);
         });
-        row.receiveFrom.forEach(function (d) {
-            checkOccurance(d, row);
+        d.receiveFrom.forEach(function (e) {
+            return givers.add(e);
         });
-        row.involvementWith.forEach(function (d) {
-            checkOccurance(d, row, true);
-        });
-    };
+    });
+
+    receivers = Array.from(receivers);
+    givers = Array.from(givers);
+
+    var giversData = {};
+    var receiversData = {};
 
     for (var i = 0; i < data.length; i++) {
-        _loop(i);
+        var row = data[i];
+        for (var j = 0; j < row.giveTo.length; j++) {
+            var giver = row.giveTo[j];
+            if (!giversData[giver]) {
+                giversData[giver] = [];
+            }
+            giversData[giver].push(row);
+        }
+        for (var _j = 0; _j < row.receiveFrom.length; _j++) {
+            var receiver = row.receiveFrom[_j];
+            if (!receiversData[receiver]) {
+                receiversData[receiver] = [];
+            }
+            receiversData[receiver].push(row);
+        }
     }
 
-    return links;
+    var connectors = Array.from(new Set(Object.keys(giversData).concat(Object.keys(receiversData))));
+
+    for (var _i = 0; _i < connectors.length; _i++) {
+        var giverNodes = giversData[connectors[_i]];
+        var receiverNodes = receiversData[connectors[_i]];
+        if (!(giverNodes && giverNodes.length && receiverNodes && receiverNodes.length)) {
+            continue;
+        }
+
+        var _loop = function _loop(_j2) {
+            var giver = giverNodes[_j2];
+
+            var _loop2 = function _loop2(k) {
+                var receiver = receiverNodes[k];
+                if (links.filter(function (d) {
+                    return d.source === receiver.number && d.target === giver.number || d.source === giver.number && d.target === receiver.number;
+                }).length === 0) {
+                    links.push({ source: giver.number, target: receiver.number, value: 1 });
+                    nodes[giver.number] = giver;
+                    nodes[receiver.number] = receiver;
+                }
+            };
+
+            for (var k = 0; k < receiverNodes.length; k++) {
+                _loop2(k);
+            }
+        };
+
+        for (var _j2 = 0; _j2 < giverNodes.length; _j2++) {
+            _loop(_j2);
+        }
+    }
+
+    return { links: links, nodes: Object.values(nodes) };
 }
 
 /***/ }),

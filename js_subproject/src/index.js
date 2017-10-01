@@ -11,9 +11,11 @@ const svg = containerDiv.append('svg')
 const plot = svg.append('g')
     .attr('transform', `translate(${margin.left}, ${margin.top})`)
 const simulation = d3.forceSimulation()
-    .force('link', d3.forceLink().id((d) => { return d.displayName }))
-    .force('charge', d3.forceManyBody().strength(-0.3))
+    .force('link', d3.forceLink().id((d) => { return d.number }).distance(5).strength(0.5))
+    .force('charge', d3.forceManyBody().strength(-3))
     .force('center', d3.forceCenter(width / 2, height / 2))
+    .force("x", d3.forceX())
+    .force("y", d3.forceY())
 
 d3.csv('./data/split_spouses.csv', parse, (err, data) => {
     if (err) {
@@ -21,21 +23,21 @@ d3.csv('./data/split_spouses.csv', parse, (err, data) => {
         return
     }
     console.log(data[0])
-    const links = createNetwork(data)
+    const network = createNetwork(data)
 
-    console.log(links)
+    console.log(network)
 
     simulation
-        .nodes(data)
+        .nodes(network.nodes)
         .on('tick', ticked)
 
     simulation.force('link')
-        .links(links)
+        .links(network.links)
 
     let link = svg.append('g')
         .attr('class', 'links')
         .selectAll('line')
-        .data(links)
+        .data(network.links)
         .enter().append('line')
         .attr('stroke-width', 1)
         .attr('stroke', 'grey')
@@ -44,15 +46,15 @@ d3.csv('./data/split_spouses.csv', parse, (err, data) => {
     let node = svg.append('g')
         .attr('class', 'nodes')
         .selectAll('circle')
-        .data(data.filter(d => d.entityType.toLowerCase().trim() === 'person'))
+        .data(network.nodes.filter(d => d.entityType.toLowerCase().trim() === 'person'))
         .enter().append('circle')
         .attr('r', 2.5)
-        // .attr('fill', function (d) { return color(d.group) })
+        .attr('fill', 'rgb(175, 51, 53)')
 
     let rectNode = svg.append('g')
         .attr('class', 'nodes')
         .selectAll('rect')
-        .data(data.filter(d => d.entityType.toLowerCase().trim() !== 'person'))
+        .data(network.nodes.filter(d => d.entityType.toLowerCase().trim() !== 'person'))
         .enter().append('rect')
         .attr('width', 5)
         .attr('height', 5)
@@ -81,28 +83,59 @@ function parse (row) { // -> modified row
 }
 
 function createNetwork (data) {
-    const namesSet = new Set(data.map(d => d.displayName))
-    const set = new Set()
-    const links = []
+    let receivers = new Set(), givers = new Set()
+    const giveToData = {}, receiveFromData = {}
+    const links = [], nodes = {}
 
-    const checkOccurance = function (d, row, involvement = false) {
-        if (!(set.has(`${d}---${row.displayName}`) || set.has(`${row.displayName}---${d}`))) {
-            // if the name and giveTo name don't (!) exist in the set
-            if (!namesSet.has(row.displayName) || !namesSet.has(d)) {
-                return
-            }
+    data.forEach(d => {
+        d.giveTo.forEach(e => receivers.add(e) )
+        d.receiveFrom.forEach(e => givers.add(e) )
+    })
 
-            set.add(`${d}---${row.displayName}`)
-            links.push({source: row.displayName, target: d, involvement: involvement})
-        }
-    }
+    receivers = Array.from(receivers)
+    givers = Array.from(givers)
+
+    const giversData = {}
+    const receiversData = {}
 
     for (let i = 0; i < data.length; i++) {
         const row = data[i]
-        row.giveTo.forEach(d => { checkOccurance(d, row) })
-        row.receiveFrom.forEach(d => { checkOccurance(d, row) })
-        row.involvementWith.forEach(d => { checkOccurance(d, row, true) })
+        for (let j = 0; j < row.giveTo.length; j++) {
+            const giver = row.giveTo[j]
+            if (!giversData[giver]) {
+                giversData[giver] = []
+            }
+            giversData[giver].push(row)
+        }
+        for (let j = 0; j < row.receiveFrom.length; j++) {
+            const receiver = row.receiveFrom[j]
+            if (!receiversData[receiver]) {
+                receiversData[receiver] = []
+            }
+            receiversData[receiver].push(row)
+        }
     }
 
-    return links
+    const connectors = Array.from(new Set(Object.keys(giversData).concat(Object.keys(receiversData))))
+
+    for (let i = 0; i < connectors.length; i++) {
+        const giverNodes = giversData[connectors[i]]
+        const receiverNodes = receiversData[connectors[i]]
+        if (!(giverNodes && giverNodes.length && receiverNodes && receiverNodes.length)) {
+            continue
+        }
+        for (let j = 0; j < giverNodes.length; j++) {
+            const giver = giverNodes[j]
+            for (let k = 0; k < receiverNodes.length; k++) {
+                const receiver = receiverNodes[k]
+                if (links.filter(d => (d.source === receiver.number && d.target === giver.number) || (d.source === giver.number && d.target === receiver.number) ).length === 0) {
+                    links.push({ source: giver.number, target: receiver.number, value: 1 })
+                    nodes[giver.number] = giver
+                    nodes[receiver.number] = receiver
+                }
+            }
+        }
+    }
+
+    return { links: links, nodes: Object.values(nodes)}
 }
