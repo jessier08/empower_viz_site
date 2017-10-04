@@ -125,7 +125,7 @@ a{
     opacity:0;
     animation-delay: 3s;
 }
-#quote{
+#theme_quote{
     padding-left:40px;
     padding-right:30px;
     font-family: "eames century modern";
@@ -351,5 +351,88 @@ a{
 .active_story{
     opacity:.3;
 }
+
+
+
+/*single node styling*/
+#legend_sidebar{
+    width:15%;
+    float:left;
+}
+#single_node_diagram{
+    width:50%;
+    float:left;
+    height:700px;
+}
+#info_sidebar{
+    width:35%;
+    float:left;
+}
+#node_legend{
+    width:90px;
+    padding-left:60px;
+    padding-top:30px;
+}
+#legend_themes{
+    padding-top:330px;
+    padding-left:30px;
+}
+.legend_theme{
+    font-family: "helvetica neue";
+    font-weight:bold;
+    color: rgba(112,98,89,.4);
+    font-size: 12px;
+    padding-bottom: 5px;
+}
+
+#display_name{
+    font-family: "helvetica neue";
+    font-size:24px;
+    font-weight: bold;
+}
+#bio{
+    text-align:right;
+    width:60%;
+    float:left;
+    padding-top:15px;
+    display:block;
+    
+    font-family: "eames century modern";
+    font-size:12px;
+}
+#bio p{
+    line-height: 18px;
+}
+#profile_pic{
+    float:left;
+    padding-left:20px;
+}
+#bio_img{
+    height:120px;
+}
+
+#person_quote{
+    clear:both;
+    padding-top:50px;
+}
+#block_quote_single{
+    width:45px;
+    position:relative;
+    float:left;
+}
+#person_quote p{
+    font-family:"eames century modern";
+    font-size:24px;
+    color:rgb(207,10,44);
+    font-weight: 500;
+    padding-left:50px;
+    padding-right:50px;
+}
+
+
+
+
+
+
 
 
