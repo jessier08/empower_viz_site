@@ -11,11 +11,14 @@ const svg = containerDiv.append('svg')
 const plot = svg.append('g')
     .attr('transform', `translate(${margin.left}, ${margin.top})`)
 const simulation = d3.forceSimulation()
-    .force('link', d3.forceLink().id((d) => { return d.number }).distance(5).strength(0.5))
-    .force('charge', d3.forceManyBody().strength(-3))
+    .force('link', d3.forceLink().id((d) => { return d.number }).distance(25))
+    .force('charge', d3.forceManyBody().strength(-6))
     .force('center', d3.forceCenter(width / 2, height / 2))
-    .force("x", d3.forceX())
-    .force("y", d3.forceY())
+    .force('collide', d3.forceCollide().radius(5))
+    .force('x', d3.forceX().strength(0.05))
+    // .force('x_', d3.forceX().strength(0.05).x(-width / 2))
+    .force('y', d3.forceY())
+    // .force('y_', d3.forceY().strength(0.05).y(-height / 2))
 
 d3.csv('./data/split_spouses.csv', parse, (err, data) => {
     if (err) {
@@ -39,7 +42,8 @@ d3.csv('./data/split_spouses.csv', parse, (err, data) => {
         .selectAll('line')
         .data(network.links)
         .enter().append('line')
-        .attr('stroke-width', 1)
+        .attr('stroke-width', 0.5)
+        .attr('opacity', 0.5)
         .attr('stroke', 'grey')
         .attr('stroke-dasharray', d => d.involvement ? '5, 5' : null)
 
@@ -101,6 +105,7 @@ function createNetwork (data) {
     for (let i = 0; i < data.length; i++) {
         const row = data[i]
         for (let j = 0; j < row.giveTo.length; j++) {
+            // giver
             const giver = row.giveTo[j]
             if (!giversData[giver]) {
                 giversData[giver] = []
@@ -108,6 +113,7 @@ function createNetwork (data) {
             giversData[giver].push(row)
         }
         for (let j = 0; j < row.receiveFrom.length; j++) {
+            // receiver
             const receiver = row.receiveFrom[j]
             if (!receiversData[receiver]) {
                 receiversData[receiver] = []
@@ -117,7 +123,7 @@ function createNetwork (data) {
     }
 
     const connectors = Array.from(new Set(Object.keys(giversData).concat(Object.keys(receiversData))))
-
+    
     for (let i = 0; i < connectors.length; i++) {
         const giverNodes = giversData[connectors[i]]
         const receiverNodes = receiversData[connectors[i]]
@@ -129,7 +135,7 @@ function createNetwork (data) {
             for (let k = 0; k < receiverNodes.length; k++) {
                 const receiver = receiverNodes[k]
                 if (links.filter(d => (d.source === receiver.number && d.target === giver.number) || (d.source === giver.number && d.target === receiver.number) ).length === 0) {
-                    links.push({ source: giver.number, target: receiver.number, value: 1 })
+                    links.push({ source: giver.number, target: receiver.number, value: 5 })
                     nodes[giver.number] = giver
                     nodes[receiver.number] = receiver
                 }
@@ -137,5 +143,5 @@ function createNetwork (data) {
         }
     }
 
-    return { links: links, nodes: Object.values(nodes)}
+    return { links: links, nodes: Object.values(nodes) }
 }
