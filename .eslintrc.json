@@ -1,0 +1,11 @@
+{
+    "extends": "standard",
+    "rules": {
+        "indent": ["error", 4],
+        "semi": [1, "never"],
+        "no-unused-vars": [1, "all"],
+        "one-var": [0, "never"],
+        "no-trailing-spaces": [0, "never"],
+        "padded-blocks": [0, "never"]
+    }
+}
