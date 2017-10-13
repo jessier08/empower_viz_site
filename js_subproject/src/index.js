@@ -130,7 +130,7 @@ d3.json('./data/network.json', (err, networkData) => {
             {div: 'campus', data: 'campus life'},
             {div: 'entre', data: 'entrepreneurship'},
             {div: 'research', data: 'research'},
-            {div: 'emerging', data: ''},
+            {div: 'emerging', data: 'emerging priorities'},
             {div: 'faculty', data: 'faculty'}
         ]
         
