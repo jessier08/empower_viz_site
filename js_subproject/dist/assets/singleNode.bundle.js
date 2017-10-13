@@ -22879,9 +22879,30 @@ d3.json('./data/network.json', function (err, data) {
         return;
     }
     console.log(data);
-    var network = goTwoLevelsDeep('NonPerson357', data);
+    // Person357
+    var network = goTwoLevelsDeep(urlParams.id, data);
     // const network = goTwoLevelsDeep('NonPerson125', data)
-    console.log(network);
+
+    // HIGHLIGHT THEMES
+    var centralNode = data.nodes.filter(function (d) {
+        return d.number === urlParams.id;
+    });
+    if (centralNode && centralNode.length) {
+        var giveThemes = centralNode[0]['Give_Receive_Link_Theme'].split(';').map(function (d) {
+            return d.trim();
+        });
+        var allThemes = new Set(centralNode[0].themes.concat(giveThemes).filter(function (d) {
+            return d !== '';
+        }));
+        allThemes = Array.from(allThemes);
+        console.log(allThemes);
+        d3.selectAll('p.legend_theme').style('opacity', 0.1);
+        allThemes.forEach(function (theme) {
+            document.querySelectorAll('p.legend_theme[data-name="' + theme + '"]');
+            d3.select('p.legend_theme[data-name="' + theme + '"]').style('opacity', 1);
+        });
+    }
+
     simulation.nodes(network.nodes).on('tick', ticked);
 
     simulation.force('link').links(network.links);
@@ -22891,7 +22912,7 @@ d3.json('./data/network.json', function (err, data) {
     plot.append('circle').attr('cx', width / 2).attr('cy', height / 2).attr('r', biggerCircleRadius).style('fill', 'none').style('stroke', 'rgba(186, 62, 79, 0.1)').style('stroke-width', '3');
 
     var link = plot.append('g').attr('class', 'links').selectAll('line').data(network.links).enter().append('line').attr('stroke-width', 0.5).attr('opacity', 0.5).attr('stroke', 'grey').attr('stroke-dasharray', function (d) {
-        return d.involvement ? '5, 5' : null;
+        return d.isInvolvement ? '5, 7' : null;
     });
 
     var node = plot.append('g').attr('class', 'nodes').selectAll('circle').data(network.nodes).enter().append('circle').attr('r', function (d) {
@@ -22902,6 +22923,8 @@ d3.json('./data/network.json', function (err, data) {
         return d.fx;
     }).attr('cy', function (d) {
         return d.fy;
+    }).on('mouseover', function (d) {
+        console.log(d);
     });
 
     function ticked() {
@@ -22967,12 +22990,16 @@ function goTwoLevelsDeep(number, network) {
         return !(level2NodeIds.has(d.source) && level2NodeIds.has(d.target));
     });
     level2NodeIds = new Set(level2Links.map(function (d) {
+        var num = null;
         if (level1NodeIds.has(d.source)) {
-            return d.target;
+            num = d.target;
         } else if (level1NodeIds.has(d.target)) {
-            return d.source;
+            num = d.source;
         }
-        return null;
+        if (num === number) {
+            return null;
+        }
+        return num;
     }));
     var level2Nodes = network.nodes.filter(function (d) {
         return level2NodeIds.has(d.number) && !level1NodeIds.has(d.number);
@@ -22980,27 +23007,22 @@ function goTwoLevelsDeep(number, network) {
     level2Nodes = level2Nodes.map(function (d, i) {
         var x = d.deepExtend();
         x.level = 2;
-        // const coords = circleCoord({x: width / 2, y: height / 2}, biggerCircleRadius, 0, i, level2Nodes.length)
-        // x.fx = coords.x
-        // x.fy = coords.y
         return x;
     });
 
     var centerNode = node.deepExtend();
     centerNode.level = 0;
     centerNode.fx = width / 2;
-    centerNode.fx = height / 2;
-    console.log(level1Nodes.concat(level2Nodes).concat([centerNode]).map(function (d) {
-        return d.level + '-' + Math.sqrt(Math.pow(350 - d.fx, 2) + Math.pow(350 - d.fy, 2));
-    }));
+    centerNode.fy = height / 2;
+
     return { links: level1Links.concat(level2Links), nodes: level1Nodes.concat(level2Nodes).concat([centerNode]) };
 }
 
 // evenly spaces nodes along arc
 function circleCoord(center, radius, startAngle, index, numNodes) {
     var angle = index * (360.0 / numNodes) + startAngle;
-    var x = Math.sin(angle * Math.PI / 180) * radius + center.x;
-    var y = Math.cos(angle * Math.PI / 180) * radius + center.y;
+    var x = Math.cos(angle * Math.PI / 180.0) * radius + center.x;
+    var y = Math.sin(angle * Math.PI / 180.0) * radius + center.y;
     return { x: x, y: y };
 }
 
@@ -23028,74 +23050,6 @@ Object.prototype.deepExtend = function () {
  * Fullname only: parentsn
  * Fullname degree: alumns
  * First name, degree: current students 
- */
-/**
- * const directLinks = network.links.filter(d => d.source === number || d.target === number)
-        .map(link => {
-            link.value = 1
-            return link
-        })
-    const indirectNodeIds = directLinks.map(d => {
-        return (d.source === number) ? d.target : d.source
-    })
-    const indirectLinks = []
-
-    indirectNodeIds.forEach(d => {
-        network.links.forEach(link => {
-            if (link.source === d && link.target !== number) {
-                link.value = 2
-                indirectLinks.push(link)
-            } else if (link.target === d && link.source !== number) {
-                link.value = 2
-                indirectLinks.push(link)
-            }
-        })
-    })
-
-    const center = {x: width / 2, y: height / 2}
-
-    const directNodeIdsSet = new Set(directLinks.map(d => d.source)
-        .concat(directLinks.map(d => d.target)))
-    const indirectNodeIdsSet = new Set(indirectLinks.map(d => d.source)
-        .concat(indirectLinks.map(d => d.target)))
-
-    const directNodes = network.nodes
-        .filter(d => directNodeIdsSet.has(d.number))
-        .map((d, i) => {
-            const coord = circleCoord(center, smallerCircleRadius, 0, i, directNodeIdsSet.size)
-            d.fx = coord.x
-            d.fy = coord.y
-            return d
-        })
-
-    const indirectNodes = network.nodes
-        .filter(d => indirectNodeIdsSet.has(d.number))
-        .map((d, i) => {
-            const coord = circleCoord(center, biggerCircleRadius, 0, i, indirectNodeIdsSet.size)
-            d.fx = coord.x
-            d.fy = coord.y
-            return d
-        })
-
-    let set = indirectNodes.concat(directNodes).map(d => d.number)
-    set = Array.from(set.entries()).map(d => d[1])
-    const allNodes = set.map(num => {
-        const directFilter = directNodes.filter(d => d.number === num)
-        if (directFilter.length > 0) {
-            return directFilter[0]
-        } else {
-            const indirectFilter = indirectNodes.filter(d => d.number === num)
-            if (indirectFilter.length > 0) {
-                return indirectFilter[0]
-            }
-        }
-    })
-    const allLinks = directLinks.concat(indirectLinks)
-    
-    node.fx = width / 2
-    node.fy = height / 2
-    allNodes.push(node)
-    return {links: allLinks, nodes: allNodes}
  */
 
 /***/ })

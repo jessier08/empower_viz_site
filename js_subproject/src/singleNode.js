@@ -38,9 +38,27 @@ d3.json('./data/network.json', (err, data) => {
         return
     }
     console.log(data)
-    const network = goTwoLevelsDeep('NonPerson357', data)
+    // Person357
+    const network = goTwoLevelsDeep(urlParams.id, data)
     // const network = goTwoLevelsDeep('NonPerson125', data)
-    console.log(network)
+
+    // HIGHLIGHT THEMES
+    const centralNode = data.nodes.filter(d => d.number === urlParams.id)
+    if (centralNode && centralNode.length) {
+        const giveThemes = centralNode[0]['Give_Receive_Link_Theme'].split(';').map(d => d.trim())
+        let allThemes = new Set(centralNode[0].themes.concat(giveThemes).filter(d => d !== ''))
+        allThemes = Array.from(allThemes)
+        console.log(allThemes)
+        d3.selectAll('p.legend_theme')
+            .style('opacity', 0.1)
+        allThemes.forEach(theme => {
+            document.querySelectorAll('p.legend_theme[data-name="' + theme + '"]')
+            d3.select('p.legend_theme[data-name="' + theme + '"]')
+                .style('opacity', 1)
+
+        })
+    }
+
     simulation.nodes(network.nodes)
         .on('tick', ticked)
 
@@ -71,7 +89,7 @@ d3.json('./data/network.json', (err, data) => {
         .attr('stroke-width', 0.5)
         .attr('opacity', 0.5)
         .attr('stroke', 'grey')
-        .attr('stroke-dasharray', d => d.involvement ? '5, 5' : null)
+        .attr('stroke-dasharray', d => d.isInvolvement ? '5, 7' : null)
 
     let node = plot.append('g')
         .attr('class', 'nodes')
@@ -82,6 +100,9 @@ d3.json('./data/network.json', (err, data) => {
         .attr('fill', d => d.entityType.toLowerCase().trim() === 'person' ? 'rgb(175, 51, 53)' : 'rgb(64, 64, 64)')
         .attr('cx', function (d) { return d.fx })
         .attr('cy', function (d) { return d.fy })
+        .on('mouseover', function (d) {
+            console.log(d)
+        })
 
     function ticked () {
         node.attr('cx', d => d.x)
@@ -128,36 +149,37 @@ function goTwoLevelsDeep (number, network) {
     }))
     level2Links = level2Links.filter(d => !(level2NodeIds.has(d.source) && level2NodeIds.has(d.target)))
     level2NodeIds = new Set(level2Links.map(d => {
+        let num = null
         if (level1NodeIds.has(d.source)) {
-            return d.target
+            num = d.target
         } else if (level1NodeIds.has(d.target)) {
-            return d.source
+            num = d.source
         }
-        return null
+        if (num === number) {
+            return null
+        }
+        return num
     }))
     let level2Nodes = network.nodes.filter(d => level2NodeIds.has(d.number) && !level1NodeIds.has(d.number))
     level2Nodes = level2Nodes.map((d, i) => {
         const x = d.deepExtend()
         x.level = 2
-        // const coords = circleCoord({x: width / 2, y: height / 2}, biggerCircleRadius, 0, i, level2Nodes.length)
-        // x.fx = coords.x
-        // x.fy = coords.y
         return x
     })
 
     var centerNode = node.deepExtend()
     centerNode.level = 0
     centerNode.fx = width / 2
-    centerNode.fx = height / 2
-    console.log(level1Nodes.concat(level2Nodes).concat([centerNode]).map(d => d.level + '-' + Math.sqrt(Math.pow(350-d.fx, 2) + Math.pow(350-d.fy, 2))))
+    centerNode.fy = height / 2
+
     return {links: level1Links.concat(level2Links), nodes: level1Nodes.concat(level2Nodes).concat([centerNode])}
 }
 
 // evenly spaces nodes along arc
 function circleCoord (center, radius, startAngle, index, numNodes) {
     const angle = (index * (360.0 / numNodes)) + startAngle
-    const x = (Math.sin(angle * Math.PI / 180) * radius) + center.x
-    const y = (Math.cos(angle * Math.PI / 180) * radius) + center.y
+    const x = (Math.cos(angle * Math.PI / 180.0) * radius) + center.x
+    const y = (Math.sin(angle * Math.PI / 180.0) * radius) + center.y
     return { x: x, y: y }
 }
 
@@ -186,71 +208,3 @@ Object.prototype.deepExtend = function() {
  * Fullname degree: alumns
  * First name, degree: current students 
  */ 
-/**
- * const directLinks = network.links.filter(d => d.source === number || d.target === number)
-        .map(link => {
-            link.value = 1
-            return link
-        })
-    const indirectNodeIds = directLinks.map(d => {
-        return (d.source === number) ? d.target : d.source
-    })
-    const indirectLinks = []
-
-    indirectNodeIds.forEach(d => {
-        network.links.forEach(link => {
-            if (link.source === d && link.target !== number) {
-                link.value = 2
-                indirectLinks.push(link)
-            } else if (link.target === d && link.source !== number) {
-                link.value = 2
-                indirectLinks.push(link)
-            }
-        })
-    })
-
-    const center = {x: width / 2, y: height / 2}
-
-    const directNodeIdsSet = new Set(directLinks.map(d => d.source)
-        .concat(directLinks.map(d => d.target)))
-    const indirectNodeIdsSet = new Set(indirectLinks.map(d => d.source)
-        .concat(indirectLinks.map(d => d.target)))
-
-    const directNodes = network.nodes
-        .filter(d => directNodeIdsSet.has(d.number))
-        .map((d, i) => {
-            const coord = circleCoord(center, smallerCircleRadius, 0, i, directNodeIdsSet.size)
-            d.fx = coord.x
-            d.fy = coord.y
-            return d
-        })
-
-    const indirectNodes = network.nodes
-        .filter(d => indirectNodeIdsSet.has(d.number))
-        .map((d, i) => {
-            const coord = circleCoord(center, biggerCircleRadius, 0, i, indirectNodeIdsSet.size)
-            d.fx = coord.x
-            d.fy = coord.y
-            return d
-        })
-
-    let set = indirectNodes.concat(directNodes).map(d => d.number)
-    set = Array.from(set.entries()).map(d => d[1])
-    const allNodes = set.map(num => {
-        const directFilter = directNodes.filter(d => d.number === num)
-        if (directFilter.length > 0) {
-            return directFilter[0]
-        } else {
-            const indirectFilter = indirectNodes.filter(d => d.number === num)
-            if (indirectFilter.length > 0) {
-                return indirectFilter[0]
-            }
-        }
-    })
-    const allLinks = directLinks.concat(indirectLinks)
-    
-    node.fx = width / 2
-    node.fy = height / 2
-    allNodes.push(node)
-    return {links: allLinks, nodes: allNodes}
- */
