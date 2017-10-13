@@ -22852,16 +22852,18 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function Autocomplete(nodes) {
     var options = {
-        keys: ['Display_Name', 'Name', 'First_Name', 'Last_Name'],
-        id: 'number'
+        keys: ['Display_Name'],
+        id: 'number',
+        threshhold: 0.0,
+        distance: 0
     };
 
     var Fuse = F.default;
     var fuse = new Fuse(nodes, options);
     // returns only ids
     document.querySelector('#search_input').onkeyup = function () {
-        if (this.value.length > 3) {
-            var results = new Set(fuse.search(this.value));
+        if (this.value.length >= 3) {
+            var results = new Set(fuse.search(' ' + this.value));
             results = nodes.filter(function (d) {
                 return results.has(d.number);
             });
@@ -23986,8 +23988,8 @@ d3.json('./data/network.json', function (err, networkData) {
         node.exit().remove();
         node = node.enter().append('circle').attr('r', 3).attr('fill', function (d) {
             return d.entityType === 'person' ? 'rgb(175, 51, 53)' : 'rgb(64, 64, 64)';
-        }).merge(node).on('mouseover', function (d) {
-            console.log(d);
+        }).merge(node).on('click', function (d) {
+            window.location.replace('/single_node.html?id=' + d.number);
         });
 
         var filters = [{ div: 'athletics', data: 'athletics' }, { div: 'student', data: 'student support' }, { div: 'campus', data: 'campus life' }, { div: 'entre', data: 'entrepreneurship' }, { div: 'research', data: 'research' }, { div: 'emerging', data: 'emerging priorities' }, { div: 'faculty', data: 'faculty' }];

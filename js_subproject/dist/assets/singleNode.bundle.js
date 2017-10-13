@@ -22852,16 +22852,18 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function Autocomplete(nodes) {
     var options = {
-        keys: ['Display_Name', 'Name', 'First_Name', 'Last_Name'],
-        id: 'number'
+        keys: ['Display_Name'],
+        id: 'number',
+        threshhold: 0.0,
+        distance: 0
     };
 
     var Fuse = F.default;
     var fuse = new Fuse(nodes, options);
     // returns only ids
     document.querySelector('#search_input').onkeyup = function () {
-        if (this.value.length > 3) {
-            var results = new Set(fuse.search(this.value));
+        if (this.value.length >= 3) {
+            var results = new Set(fuse.search(' ' + this.value));
             results = nodes.filter(function (d) {
                 return results.has(d.number);
             });
@@ -23970,9 +23972,9 @@ d3.json('./data/network.json', function (err, data) {
 
     simulation.force('link').links(network.links);
 
-    plot.append('circle').attr('cx', width / 2).attr('cy', height / 2).attr('r', smallerCircleRadius).style('fill', 'none').style('stroke', 'rgba(186, 62, 79, 0.1)').style('stroke-width', '3');
+    plot.append('circle').attr('cx', width / 2).attr('cy', height / 2).attr('r', smallerCircleRadius).style('fill', 'none').style('stroke', 'rgba(64, 64, 64, 0.5)').style('stroke-width', '3');
 
-    plot.append('circle').attr('cx', width / 2).attr('cy', height / 2).attr('r', biggerCircleRadius).style('fill', 'none').style('stroke', 'rgba(186, 62, 79, 0.1)').style('stroke-width', '3');
+    plot.append('circle').attr('cx', width / 2).attr('cy', height / 2).attr('r', biggerCircleRadius).style('fill', 'none').style('stroke', 'rgba(64, 64, 64, 0.5)').style('stroke-width', '3');
 
     var link = plot.append('g').attr('class', 'links').selectAll('line').data(network.links).enter().append('line').attr('stroke-width', 0.5).attr('opacity', 0.5).attr('stroke', 'grey').attr('stroke-dasharray', function (d) {
         return d.isInvolvement ? '5, 7' : null;
