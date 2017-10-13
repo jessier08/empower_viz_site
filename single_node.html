@@ -1,6 +1,5 @@
-
 <!doctype html>
-<html class="no-js" lang="">
+<html>
 <head>
     
     <meta charset="utf-8">
@@ -13,7 +12,6 @@
     <link href="css/stylesheet.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-    
 </head> 
     
 <body>
@@ -22,10 +20,14 @@
         <div id="header">
             <img id="header_title" src="imgs/header_title.png">
             <a href="full_network.html"><span class="header_link">see full network</span></a>
+            <div id="search_bar">
+                <img id="search_icon" src="imgs/search_icon.png">
+                <span>search name</span> 
+            </div>
         </div>
         
         <div id="legend_sidebar">
-            <img src="imgs/legend-20.png" id="node_legend"/>
+            <img src="imgs/legend.png" id="node_legend"/>
             <div id="legend_themes">
                 <p class="legend_theme">athletics</p>
                 <p class="legend_theme">student support</p>
@@ -38,36 +40,68 @@
         </div>
         
         <div id="single_node_diagram">
-
+ 
         </div>
         
         <div id="info_sidebar">
-            <p id="display_name">Maureen Dorothy Cabrera</p>
+            <p id="display_name"></p>
             
             <div id="bio">
-                <p>
-                    <span id="college"> College of Professional Studies</span><br>
-                    <span id="degree">Bachelor of Science</span><br>
-                    <span id="major">Industrial Engineering, <span id="year">2015</span></span>
-                </p>
+                <div id="entity_bio_text">
+                    <span id="entity_bio"> </span>
+                </div>
                 
-                
+                <div id="person_bio_text">
+                    <p>
+                        <span id="title"></span>
+                        <span id="college"></span>
+                        <span id="degree"></span>
+                        <span id="major"><span id="year"></span></span>
+                        <span id="vip"></span>
+                        <span id="hunt_100"></span>
+                        <span id="hunt_society"></span>
+                    </p>      
+                </div>
+
+                <div id="profile_pic">
+                    <img id="person_pic" src="">
+                    <img id="entity_pic" src="">
+                </div>
             </div>
-            <div id="profile_pic">
-                <img id="bio_img" src="imgs/sarah_nelson.png">
-            </div>
-          
+            
             <div id="person_quote">
                 <img src="imgs/quote.png" id="block_quote_single">
-                <p >Having my education costs taken care of by Northeastern and the Department of Veterans Affairs was a huge plus. I could concentrate on my studies stress-free.</p>
+                <p></p>
             </div>
+            
+            <div id="related_nodes">
+                <p id="related_title">see related nodes</p>
+                
+                <div class="related_node"> 
+                    <img id="related_1" src="">
+                    <span id="related_1_name"></span>
+                </div>
+                <div class="related_node"> 
+                    <img id="related_2" src="">
+                    <span id="related_2_name"></span>
+                </div>
+                <div class="related_node"> 
+                    <img id="related_3" src="">
+                    <span id="related_3_name"></span>
+                </div>
+            </div>
+            
+            <div id="video_player" >
+                <video id="video" controls >
+                    <source src="" type="video/mp4"/>
+                </video>
+            </div> 
             
         </div>
     </div>
     
 </div>  
 
-   
 </body>
 
 </html>

@@ -21,7 +21,10 @@
         <div id="header">
             <img id="header_title" src="imgs/header_title.png">
             <span class="explore">touch network to explore</span></a>
-            <div id="search_bar"> <p>search name</p> </div>
+            <div id="search_bar">
+                <img id="search_icon" src="imgs/search_icon.png">
+                <span>search name</span> 
+            </div>
         </div>
 
         <a href="single_node.html">
@@ -35,7 +38,10 @@
             
             <div id="network_theme_navigation">
                 
-                <div class="theme_link"><span id="athletics" class="link">athletics</span></div>
+                <div class="theme_link">
+                    <span id="athletics" class="link">athletics</span>
+                    <span id="athletics_theme_close" class="theme_close hide">x</span>
+                </div>
                 <div id="athletics_description" class="theme_description slideup">
                     <p class="description">Philanthropy propels healthy competition at Northeastern, where student-athletes thrive.</p>
                     <img src="imgs/sarah_nelson.png" class="theme_preview">
@@ -44,7 +50,10 @@
                     <a href="themes.html"><p class="explore_theme">explore these stories</p></a>
                 </div>
                 
-                <div class="theme_link"><span id="student" class="link">student support</span></div>
+                <div class="theme_link">
+                    <span id="student" class="link">student support</span>
+                    <span id="student_theme_close" class="theme_close hide">x</span>
+                </div>
                 <div id="student_description" class="theme_description slideup">
                     <p class="description">Support of financial aid clears students’ paths to learning, so they can focus on their academic journey.</p>
                     <img src="imgs/sarah_nelson.png" class="theme_preview">
@@ -53,7 +62,10 @@
                     <a href="themes.html"><p class="explore_theme">explore connection stories</p></a>
                 </div>
                 
-                <div class="theme_link"><span id="campus" class="link">campus life</span></div>
+                <div class="theme_link">
+                    <span id="campus" class="link">campus life</span>
+                    <span id="campus_theme_close" class="theme_close hide">x</span>
+                </div>
                 <div id="campus_description" class="theme_description slideup">
                     <p class="description">The Northeastern community effects positive change that reaches beyond the boundaries of campus.</p>
                     <img src="imgs/sarah_nelson.png" class="theme_preview">
@@ -62,7 +74,10 @@
                     <a href="themes.html"><p class="explore_theme">explore connection stories</p></a>
                 </div>
                 
-                <div class="theme_link"><span id="entre" class="link">entrepreneurship</span></div>
+                <div class="theme_link">
+                    <span id="entre" class="link">entrepreneurship</span>
+                    <span id="entre_theme_close" class="theme_close hide">x</span>
+                </div>
                 <div id="entre_description" class="theme_description slideup">
                     <p class="description">With an entrepreneurial ecosystem powered by giving, the Northeastern community launches myriad ventures. </p>
                     <img src="imgs/sarah_nelson.png" class="theme_preview">
@@ -71,7 +86,10 @@
                     <a href="themes.html"><p class="explore_theme">explore connection stories</p></a>
                 </div>
                 
-                <div class="theme_link"><span id="research" class="link">research</span></div>
+                <div class="theme_link">
+                    <span id="research" class="link">research</span>
+                    <span id="research_theme_close" class="theme_close hide">x</span>
+                </div>
                 <div id="research_description" class="theme_description slideup">
                     <p class="description">Discovery is at the center of any research university, and philanthropy is the engine that runs it.</p>
                     <img src="imgs/sarah_nelson.png" class="theme_preview">
@@ -80,7 +98,10 @@
                     <a href="themes.html"><p class="explore_theme">explore connection stories</p></a>
                 </div>
                 
-                <div class="theme_link"><span id="emerging" class="link">emerging priorities</span></div>
+                <div class="theme_link">
+                    <span id="emerging" class="link">emerging priorities</span>
+                    <span id="emerging_theme_close" class="theme_close hide">x</span>
+                </div>
                 <div id="emerging_description" class="theme_description slideup">
                     <p class="description">Unrestricted giving helps Northeastern take the lead in creating the higher education models of the future.</p>
                     <img src="imgs/sarah_nelson.png" class="theme_preview">
@@ -89,7 +110,10 @@
                     <a href="themes.html"><p class="explore_theme">explore connection stories</p></a>
                 </div>
                 
-                <div class="theme_link"><span id="faculty" class="link">faculty</span></div>
+                <div class="theme_link">
+                    <span id="faculty" class="link">faculty</span>
+                    <span id="faculty_theme_close" class="theme_close hide">x</span>
+                </div>
                 <div id="faculty_description" class="theme_description slideup">
                     <p class="description">Teachers, mentors, and inventors—your support helps Northeastern faculty nurture bright young minds.</p>
                     <img src="imgs/sarah_nelson.png" class="theme_preview">
@@ -110,24 +134,31 @@
     <script>
         $("#athletics").click(function(){
             $("#athletics_description").toggleClass("slidedown slideup");
+            $("#athletics_theme_close").toggleClass("hide show");
         });
         $("#student").click(function(){
             $("#student_description").toggleClass("slidedown slideup");
+            $("#student_theme_close").toggleClass("hide show");
         });
         $("#campus").click(function(){
             $("#campus_description").toggleClass("slidedown slideup");
+            $("#campus_theme_close").toggleClass("hide show");
         });
         $("#entre").click(function(){
             $("#entre_description").toggleClass("slidedown slideup");
+            $("#entre_theme_close").toggleClass("hide show");
         });
         $("#research").click(function(){
             $("#research_description").toggleClass("slidedown slideup");
+            $("#research_theme_close").toggleClass("hide show");
         });
         $("#emerging").click(function(){
             $("#emerging_description").toggleClass("slidedown slideup");
+            $("#emerging_theme_close").toggleClass("hide show");
         });
         $("#faculty").click(function(){
             $("#faculty_description").toggleClass("slidedown slideup");
+            $("#faculty_theme_close").toggleClass("hide show");
         });
     </script>
 
