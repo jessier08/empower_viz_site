@@ -17,13 +17,18 @@
 
 <body>
 
+    <div id="search_autocomplete_container">
+        <ul id="search_autocomplete">   
+        </ul>
+    </div>
+
     <div id="container">
         <div id="header">
             <img id="header_title" src="imgs/header_title.png">
             <span class="explore">touch network to explore</span></a>
             <div id="search_bar">
                 <img id="search_icon" src="imgs/search_icon.png">
-                <span>search name</span> 
+                <input type="textbox" id="search_input" placeholder="search name"/>
             </div>
         </div>
 
@@ -128,10 +133,9 @@
     </div>
 
 </div>
-
     <script src="./js_subproject/dist/assets/index.bundle.js"></script>
-   <!-- <script src="http://localhost:9000/assets/index.bundle.js"></script> -->
-   <script src="./js_subproject/dist/assets/resetWebsite.js"></script>
+    <!-- <script src="http://localhost:9000/assets/index.bundle.js"></script> -->
+    <script src="./js_subproject/dist/assets/resetWebsite.js"></script>
     <script>
         Array.from($(".theme_description")).forEach(function(ele) {
             $('#' + ele.id.replace('_description', '')).click(function(){

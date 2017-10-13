@@ -1,4 +1,5 @@
 import * as d3 from 'd3'
+import {Autocomplete} from './autocomplete'
 
 const containerDiv = d3.select('#full_network')
 const margin = {top: 50, right: 50, bottom: 50, left: 50}
@@ -25,6 +26,11 @@ d3.json('./data/network.json', (err, networkData) => {
         console.log(err)
         return
     }
+
+    // SETTING UP SEARCH
+    Autocomplete(networkData.nodes)
+    // console.log(fuse.search('Charles'))
+
     const linksG = plot.append('g')
         .attr('class', 'links')
     const nodesG = plot.append('g')
@@ -43,10 +49,6 @@ d3.json('./data/network.json', (err, networkData) => {
 
                 node.attr('cx', width / 2)
                     .attr('cy', height / 2)
-
-                rectNode.transition()
-                    .attr('x', width / 2)
-                    .attr('y', height / 2)
             }
             ticked.count++
 
@@ -61,12 +63,6 @@ d3.json('./data/network.json', (err, networkData) => {
                 node // .transition().duration(50)
                     .attr('cx', function (d) { return d.x })
                     .attr('cy', function (d) { return d.y })
-
-                rectNode // .transition().duration(50)
-                    .attr('cx', function (d) { return d.x })
-                    .attr('cy', function (d) { return d.y })
-                    // .attr('x', function (d) { return d.x })
-                    // .attr('y', function (d) { return d.y })
             }
         }
         function ended () {
@@ -98,28 +94,13 @@ d3.json('./data/network.json', (err, networkData) => {
 
         let node = nodesG
             .selectAll('circle')
-            .data(network.nodes.filter(d => d.entityType === 'person'), d => d.number)
+            .data(network.nodes)
         node.exit().remove()
         node = node.enter()
             .append('circle')
             .attr('r', 3)
-            .attr('fill', 'rgb(175, 51, 53)')
+            .attr('fill', d => d.entityType === 'person' ? 'rgb(175, 51, 53)' : 'rgb(64, 64, 64)')
             .merge(node)
-            .on('mouseover', (d) => {
-                console.log(d);
-            })
-
-        let rectNode = rectNodesG
-            .selectAll('circle')
-            .data(network.nodes.filter(d => d.entityType !== 'person'), d => d.number)
-        rectNode.exit().transition().style('opacity', 0).remove()
-        rectNode = rectNode.enter()
-            .append('circle')
-            .attr('r', 3)
-            .attr('fill', 'rgb(64, 64, 64)')
-            // .attr('width', 5)
-            // .attr('height', 5)
-            .merge(rectNode)
             .on('mouseover', (d) => {
                 console.log(d);
             })
@@ -146,5 +127,5 @@ d3.json('./data/network.json', (err, networkData) => {
             })
         })
     }
-    visualise(networkData)
+    // visualise(networkData)
 })

@@ -1,4 +1,5 @@
 import * as d3 from 'd3'
+import {Autocomplete} from './autocomplete'
 
 var urlParams;
 (window.onpopstate = function () {
@@ -38,6 +39,7 @@ d3.json('./data/network.json', (err, data) => {
         return
     }
     console.log(data)
+    Autocomplete(data.nodes)
     // Person357
     const network = goTwoLevelsDeep(urlParams.id, data)
     // const network = goTwoLevelsDeep('NonPerson125', data)
@@ -204,7 +206,7 @@ Object.prototype.deepExtend = function() {
 
 /**
  * Fullname, bio: non-humans
- * Fullname only: parentsn
+ * Fullname only: parents
  * Fullname degree: alumns
  * First name, degree: current students 
  */ 
