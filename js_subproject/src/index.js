@@ -127,5 +127,5 @@ d3.json('./data/network.json', (err, networkData) => {
             })
         })
     }
-    // visualise(networkData)
+    visualise(networkData)
 })

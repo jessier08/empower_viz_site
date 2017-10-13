@@ -24012,7 +24012,7 @@ d3.json('./data/network.json', function (err, networkData) {
             });
         });
     }
-    // visualise(networkData)
+    visualise(networkData);
 });
 
 /***/ })
