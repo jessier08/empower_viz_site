@@ -105,29 +105,18 @@
 
 </div>
 
-    <script src="./js_subproject/dist/assets/index.bundle.js"></script>
+    <!-- <script src="./js_subproject/dist/assets/index.bundle.js"></script> -->
+   <script src="http://localhost:9000/assets/index.bundle.js"></script>
     
     <script>
-        $("#athletics").click(function(){
-            $("#athletics_description").toggleClass("slidedown slideup");
-        });
-        $("#student").click(function(){
-            $("#student_description").toggleClass("slidedown slideup");
-        });
-        $("#campus").click(function(){
-            $("#campus_description").toggleClass("slidedown slideup");
-        });
-        $("#entre").click(function(){
-            $("#entre_description").toggleClass("slidedown slideup");
-        });
-        $("#research").click(function(){
-            $("#research_description").toggleClass("slidedown slideup");
-        });
-        $("#emerging").click(function(){
-            $("#emerging_description").toggleClass("slidedown slideup");
-        });
-        $("#faculty").click(function(){
-            $("#faculty_description").toggleClass("slidedown slideup");
+        Array.from($(".theme_description")).forEach(function(ele) {
+            $('#' + ele.id.replace('_description', '')).click(function(){
+                Array.from($('.theme_description')).forEach(function(ele) {
+                    ele.classList.add('slideup')
+                    ele.classList.remove('slidedown')
+                })
+                ele.classList.add('slidedown')
+            })
         });
     </script>
 

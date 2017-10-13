@@ -22687,154 +22687,129 @@ var svg = containerDiv.append('svg').attr('width', width).attr('height', height)
 var plot = svg.append('g').attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
 var simulation = d3.forceSimulation().force('link', d3.forceLink().id(function (d) {
     return d.number;
-}).distance(25)).force('charge', d3.forceManyBody().strength(-6)).force('center', d3.forceCenter(width / 2, height / 2)).force('collide', d3.forceCollide().radius(5)).force('x', d3.forceX().strength(0.05))
+}).distance(25)).force('charge', d3.forceManyBody().strength(-6)).force('center', d3.forceCenter(width / 2, height / 2)).force('collide', d3.forceCollide().radius(5)).force('x', d3.forceX().strength(0.06))
 // .force('x_', d3.forceX().strength(0.05).x(-width / 2))
-.force('y', d3.forceY());
+.force('y', d3.forceY().strength(0.1));
 // .force('y_', d3.forceY().strength(0.05).y(-height / 2))
 
-d3.csv('./data/split_spouses.csv', parse, function (err, data) {
+d3.json('./data/network.json', function (err, networkData) {
     if (err) {
         console.log(err);
         return;
     }
-    console.log(data[0]);
-    var network = createNetwork(data);
+    var linksG = plot.append('g').attr('class', 'links');
+    var nodesG = plot.append('g').attr('class', 'nodes');
+    var rectNodesG = plot.append('g').attr('class', 'rect-nodes');
 
-    console.log(network);
+    function visualise(network) {
+        function ticked() {
+            if (!ticked.count) {
+                ticked.count = 0;
+                link.attr('x1', width / 2).attr('y1', height / 2).attr('x2', width / 2).attr('y2', height / 2);
 
-    simulation.nodes(network.nodes).on('tick', ticked);
+                node.attr('cx', width / 2).attr('cy', height / 2);
 
-    simulation.force('link').links(network.links);
+                rectNode.transition().attr('x', width / 2).attr('y', height / 2);
+            }
+            ticked.count++;
 
-    var link = svg.append('g').attr('class', 'links').selectAll('line').data(network.links).enter().append('line').attr('stroke-width', 0.5).attr('opacity', 0.5).attr('stroke', 'grey').attr('stroke-dasharray', function (d) {
-        return d.involvement ? '5, 5' : null;
-    });
+            if (ticked.count === 5) {
+                ticked.count = 1;
+                link // .transition().duration(50)
+                .attr('x1', function (d) {
+                    return d.source.x;
+                }).attr('y1', function (d) {
+                    return d.source.y;
+                }).attr('x2', function (d) {
+                    return d.target.x;
+                }).attr('y2', function (d) {
+                    return d.target.y;
+                });
 
-    var node = svg.append('g').attr('class', 'nodes').selectAll('circle').data(network.nodes.filter(function (d) {
-        return d.entityType.toLowerCase().trim() === 'person';
-    })).enter().append('circle').attr('r', 2.5).attr('fill', 'rgb(175, 51, 53)');
+                node // .transition().duration(50)
+                .attr('cx', function (d) {
+                    return d.x;
+                }).attr('cy', function (d) {
+                    return d.y;
+                });
 
-    var rectNode = svg.append('g').attr('class', 'nodes').selectAll('rect').data(network.nodes.filter(function (d) {
-        return d.entityType.toLowerCase().trim() !== 'person';
-    })).enter().append('rect').attr('width', 5).attr('height', 5);
+                rectNode // .transition().duration(50)
+                .attr('cx', function (d) {
+                    return d.x;
+                }).attr('cy', function (d) {
+                    return d.y;
+                });
+                // .attr('x', function (d) { return d.x })
+                // .attr('y', function (d) { return d.y })
+            }
+        }
+        function ended() {
+            simulation.alpha(0.1);
+            simulation.restart();
+        }
 
-    function ticked() {
-        link.attr('x1', function (d) {
-            return d.source.x;
-        }).attr('y1', function (d) {
-            return d.source.y;
-        }).attr('x2', function (d) {
-            return d.target.x;
-        }).attr('y2', function (d) {
-            return d.target.y;
+        simulation.nodes(network.nodes).on('tick', ticked).on('end', ended);
+
+        simulation.force('link').links(network.links);
+        simulation.alpha(1);
+        simulation.restart();
+
+        var link = linksG.selectAll('line').data(network.links, function (d) {
+            return d.source + '-' + d.target;
+        });
+        link.exit().remove();
+        link = link.enter().append('line').merge(link);
+        link.attr('stroke-width', 0.5).attr('opacity', 0.5).attr('stroke', 'rgba(64, 64, 64, 0.5)').attr('stroke-dasharray', function (d) {
+            return d.isInvolvement ? '5, 7' : null;
         });
 
-        node.attr('cx', function (d) {
-            return d.x;
-        }).attr('cy', function (d) {
-            return d.y;
+        var node = nodesG.selectAll('circle').data(network.nodes.filter(function (d) {
+            return d.entityType === 'person';
+        }), function (d) {
+            return d.number;
+        });
+        node.exit().remove();
+        node = node.enter().append('circle').attr('r', 3).attr('fill', 'rgb(175, 51, 53)').merge(node).on('mouseover', function (d) {
+            console.log(d);
         });
 
-        rectNode.attr('x', function (d) {
-            return d.x;
-        }).attr('y', function (d) {
-            return d.y;
+        var rectNode = rectNodesG.selectAll('circle').data(network.nodes.filter(function (d) {
+            return d.entityType !== 'person';
+        }), function (d) {
+            return d.number;
+        });
+        rectNode.exit().transition().style('opacity', 0).remove();
+        rectNode = rectNode.enter().append('circle').attr('r', 3).attr('fill', 'rgb(64, 64, 64)')
+        // .attr('width', 5)
+        // .attr('height', 5)
+        .merge(rectNode).on('mouseover', function (d) {
+            console.log(d);
+        });
+
+        var filters = [{ div: 'athletics', data: 'athletics' }, { div: 'student', data: 'student support' }, { div: 'campus', data: 'campus life' }, { div: 'entre', data: 'entrepreneurship' }, { div: 'research', data: 'research' }, { div: 'emerging', data: '' }, { div: 'faculty', data: 'faculty' }];
+
+        filters.forEach(function (theme) {
+            d3.select('#' + theme.div).on('click', function () {
+                var links = networkData.links.filter(function (d) {
+                    return d.theme === theme.data;
+                });
+                var nodeIds = new Set(links.map(function (d) {
+                    return [d.source.number, d.target.number];
+                }).reduce(function (p, c) {
+                    return p.concat(c);
+                }, []));
+                var nodes = networkData.nodes.filter(function (d) {
+                    return nodeIds.has(d.number);
+                });
+                setTimeout(function () {
+                    ticked.count = 0;
+                    visualise({ nodes: nodes, links: links });
+                }, 0);
+            });
         });
     }
+    visualise(networkData);
 });
-
-function parse(row) {
-    // -> modified row
-    row.giveTo = row.giveTo === '' ? [] : row.giveTo.split(';').map(function (d) {
-        return d.trim();
-    });
-    row.receiveFrom = row.receiveFrom === '' ? [] : row.receiveFrom.split(';').map(function (d) {
-        return d.trim();
-    });
-    row.involvementWith = row.involvementWith === '' ? [] : row.involvementWith.split(';').map(function (d) {
-        return d.trim();
-    });
-    return row;
-}
-
-function createNetwork(data) {
-    var receivers = new Set(),
-        givers = new Set();
-    var giveToData = {},
-        receiveFromData = {};
-    var links = [],
-        nodes = {};
-
-    data.forEach(function (d) {
-        d.giveTo.forEach(function (e) {
-            return receivers.add(e);
-        });
-        d.receiveFrom.forEach(function (e) {
-            return givers.add(e);
-        });
-    });
-
-    receivers = Array.from(receivers);
-    givers = Array.from(givers);
-
-    var giversData = {};
-    var receiversData = {};
-
-    for (var i = 0; i < data.length; i++) {
-        var row = data[i];
-        for (var j = 0; j < row.giveTo.length; j++) {
-            // giver
-            var giver = row.giveTo[j];
-            if (!giversData[giver]) {
-                giversData[giver] = [];
-            }
-            giversData[giver].push(row);
-        }
-        for (var _j = 0; _j < row.receiveFrom.length; _j++) {
-            // receiver
-            var receiver = row.receiveFrom[_j];
-            if (!receiversData[receiver]) {
-                receiversData[receiver] = [];
-            }
-            receiversData[receiver].push(row);
-        }
-    }
-
-    var connectors = Array.from(new Set(Object.keys(giversData).concat(Object.keys(receiversData))));
-
-    for (var _i = 0; _i < connectors.length; _i++) {
-        var giverNodes = giversData[connectors[_i]];
-        var receiverNodes = receiversData[connectors[_i]];
-        if (!(giverNodes && giverNodes.length && receiverNodes && receiverNodes.length)) {
-            continue;
-        }
-
-        var _loop = function _loop(_j2) {
-            var giver = giverNodes[_j2];
-
-            var _loop2 = function _loop2(k) {
-                var receiver = receiverNodes[k];
-                if (links.filter(function (d) {
-                    return d.source === receiver.number && d.target === giver.number || d.source === giver.number && d.target === receiver.number;
-                }).length === 0) {
-                    links.push({ source: giver.number, target: receiver.number, value: 5 });
-                    nodes[giver.number] = giver;
-                    nodes[receiver.number] = receiver;
-                }
-            };
-
-            for (var k = 0; k < receiverNodes.length; k++) {
-                _loop2(k);
-            }
-        };
-
-        for (var _j2 = 0; _j2 < giverNodes.length; _j2++) {
-            _loop(_j2);
-        }
-    }
-
-    return { links: links, nodes: Object.values(nodes) };
-}
 
 /***/ })
 /******/ ]);
