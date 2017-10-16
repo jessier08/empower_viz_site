@@ -145,8 +145,9 @@ a{
 /*theme page styling*/
 #left_sidebar{
     height:92vh;
-    width:25vw;
+    width:28vw;
     float:left; 
+    position:relative;
 }
 .fadeIn{
     opacity: 0;
@@ -175,7 +176,6 @@ a{
 }
 #block_quote{
     width:25px;
-    position:fixed;
     left:15px;
 }
 #theme_quote{
@@ -205,12 +205,14 @@ a{
     height:92vh;
     width:56vw;
     float:left;
+    position:relative;
 }
 
 #right_sidebar{
     height:92vh;
     width:15vw;
     float:left;
+    position:relative;
 }
 #theme_nav_direction{
     font-family: "eames century modern";
@@ -409,7 +411,6 @@ a{
     height:100vh;
     overflow-x: hidden;
     overflow-y: hidden;
-    position:relative;
 }
 
 #landing_text{
@@ -418,41 +419,33 @@ a{
 }
 
 #landing_title{
-    padding-top:150px;
-    padding-left:600px;
+    padding-top:10vw;
+    padding-left:30vw;
+    width:30vw;
+}
+#landing_title img{
+    width:50vw;
 }
 
 #landing_enter{
-    width:375px;
     font-family: "helvetica neue";
-    font-size:16px;
+    font-size:2vh;
     color: rgb(207,10,44);
-    padding-left:725px;
+    padding-left:40vw;
+    padding-right:20vw;
 }
 
 #enter{
-    padding-top:50px;
+    padding-top:5vh;
     font-family: "helvetica neue";
-    font-size:20px;
+    font-size:3vh;
     font-weight: bold;
     float:right;
     color: rgb(207,10,44);
     border-bottom: 4px solid;
 }
-
-@keyframes floating_3 {
-    0% { background-position: 98% 98% ;}
-    50% {background-position: 5% 5%;}
-    100% { background-position: 98% 98% ;}
-}
-#background_3{
-    position:relative;
-    z-index:2;
-    width:100%;
-    height: 100%;
-    background-image: url("/imgs/background_test-05.png");
-    background-size: 200%;
-    opacity:1;
-    
-    animation: floating_3 40s linear infinite;
+#landing_video{
+    position:fixed;
+    width:100vw;
+    z-index:-1;
 }
