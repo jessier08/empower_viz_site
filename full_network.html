@@ -131,35 +131,47 @@ Explore stories that illustrate the impact of gifts to support student entrepren
 </div>
 
     <script src="./js_subproject/dist/assets/index.bundle.js"></script>
-    
+   <!-- <script src="http://localhost:9000/assets/index.bundle.js"></script> -->
+   <script src="./js_subproject/dist/assets/resetWebsite.js"></script>
     <script>
-        $("#athletics").click(function(){
-            $("#athletics_description").toggleClass("slidedown slideup");
-            $("#athletics_theme_close").toggleClass("hide show");
-        });
-        $("#student").click(function(){
-            $("#student_description").toggleClass("slidedown slideup");
-            $("#student_theme_close").toggleClass("hide show");
-        });
-        $("#campus").click(function(){
-            $("#campus_description").toggleClass("slidedown slideup");
-            $("#campus_theme_close").toggleClass("hide show");
-        });
-        $("#entre").click(function(){
-            $("#entre_description").toggleClass("slidedown slideup");
-            $("#entre_theme_close").toggleClass("hide show");
-        });
-        $("#research").click(function(){
-            $("#research_description").toggleClass("slidedown slideup");
-            $("#research_theme_close").toggleClass("hide show");
-        });
-        $("#emerging").click(function(){
-            $("#emerging_description").toggleClass("slidedown slideup");
-            $("#emerging_theme_close").toggleClass("hide show");
-        });
-        $("#faculty").click(function(){
-            $("#faculty_description").toggleClass("slidedown slideup");
-            $("#faculty_theme_close").toggleClass("hide show");
+
+//        $("#athletics").click(function(){
+//            $("#athletics_description").toggleClass("slidedown slideup");
+//            $("#athletics_theme_close").toggleClass("hide show");
+//        });
+//        $("#student").click(function(){
+//            $("#student_description").toggleClass("slidedown slideup");
+//            $("#student_theme_close").toggleClass("hide show");
+//        });
+//        $("#campus").click(function(){
+//            $("#campus_description").toggleClass("slidedown slideup");
+//            $("#campus_theme_close").toggleClass("hide show");
+//        });
+//        $("#entre").click(function(){
+//            $("#entre_description").toggleClass("slidedown slideup");
+//            $("#entre_theme_close").toggleClass("hide show");
+//        });
+//        $("#research").click(function(){
+//            $("#research_description").toggleClass("slidedown slideup");
+//            $("#research_theme_close").toggleClass("hide show");
+//        });
+//        $("#emerging").click(function(){
+//            $("#emerging_description").toggleClass("slidedown slideup");
+//            $("#emerging_theme_close").toggleClass("hide show");
+//        });
+//        $("#faculty").click(function(){
+//            $("#faculty_description").toggleClass("slidedown slideup");
+//            $("#faculty_theme_close").toggleClass("hide show");
+
+        Array.from($(".theme_description")).forEach(function(ele) {
+            $('#' + ele.id.replace('_description', '')).click(function(){
+                Array.from($('.theme_description')).forEach(function(ele) {
+                    ele.classList.add('slideup')
+                    ele.classList.remove('slidedown')
+                })
+                ele.classList.add('slidedown')
+            })
+
         });
     </script>
 

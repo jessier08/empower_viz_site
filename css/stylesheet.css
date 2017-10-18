@@ -442,7 +442,10 @@ a{
     float:right;
     color: rgb(207,10,44);
     border-bottom: 4px solid;
+}
+#enter a{
     text-decoration: none;
+    color: rgb(207,10,44);
 }
 #landing_video{
     position:fixed;
@@ -454,22 +457,38 @@ a{
 #mobile_container{
     max-width:1024px;
     margin: 0 auto;
+    overflow-y: hidden;
 }
-#mobile_header img{
-    width:80vw;
-    padding-top:2vh;
-    padding-left: 10vw;
+#mobile_header{
+    width:100%;
+    height:10vh;
 }
+#mobile_directions{
+    font-family:"eames century modern";
+    font-size:2.5vh;
+    color:rgb(64,64,64);
+    text-align:center;
+    padding-top:1.5vh;
+}
+#helvetica{
+    font-family:"helvetica neue";
+    font-weight:bold;
+}
+
 .theme{
     width:100vw;
-    float:left;
-    font-size:3vh;
+    font-size:5vh;
     font-family: "helvetica neue";
     font-weight: bold;
-    padding-left:10vw;
+    color:rgb(64,64,64);
+}
+.theme_title{
+    margin-left:15vw;
+    height: 11vh;
+    z-index:2;
 }
 .theme span{
-    border-bottom: .45vh solid red;
+    border-bottom: .45vh solid rgb(207,10,44);
 }
 .mobile_theme_description{
     font-size:2vh;
@@ -477,4 +496,37 @@ a{
     font-weight:normal;
     color: rgb(64,64,64);
     width:80vw;
+    display:none;
+}
+
+
+#view_desktop{
+    color:rgb(207,10,44);
+    font-family: "eames century modern";
+    font-size:2vh;
+    font-style:italic;
+    text-align: center;
+    height: 5vh;
+}
+
+.story_box{
+    z-index:0;
+    height:75vh;
+}
+.story_image img{
+    width:80vw;
+    padding-left:10vw;
+}
+.mobile_headline{
+    font-family:"helvetica neue";
+    font-size:3vh;
+    font-weight:bold;
+    padding-left:5vw;
+    padding-top:2vh;
+}
+.mobile_story{
+    font-family:"helvetica neue";
+    font-size:1.5vh;
+    padding-left:5vw;
+    padding-right:5vw;
 }
