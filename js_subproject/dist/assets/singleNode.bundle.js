@@ -23953,10 +23953,20 @@ d3.json('./data/network.json', function (err, data) {
         return d.number === urlParams.id;
     });
     if (centralNode && centralNode.length) {
-        var giveThemes = centralNode[0]['Give_Receive_Link_Theme'].split(';').map(function (d) {
+        centralNode = centralNode[0];
+
+        if (centralNode.entityType === 'person') {
+            console.log(centralNode['person_bio_text']);
+            d3.select('#person_bio').text(centralNode['Bio']);
+        } else if (centralNode.entityType === 'non-person') {
+            console.log(centralNode['entity_bio_text']);
+            d3.select('#entity_bio').text(centralNode['Bio']);
+        }
+
+        var giveThemes = centralNode['Give_Receive_Link_Theme'].split(';').map(function (d) {
             return d.trim();
         });
-        var allThemes = new Set(centralNode[0].themes.concat(giveThemes).filter(function (d) {
+        var allThemes = new Set(centralNode.themes.concat(giveThemes).filter(function (d) {
             return d !== '';
         }));
         allThemes = Array.from(allThemes);
@@ -23972,31 +23982,34 @@ d3.json('./data/network.json', function (err, data) {
 
     simulation.force('link').links(network.links);
 
-    plot.append('circle').attr('cx', width / 2).attr('cy', height / 2).attr('r', smallerCircleRadius).style('fill', 'none').style('stroke', 'rgba(64, 64, 64, 0.5)').style('stroke-width', '3');
+    plot.append('circle').attr('cx', width / 2).attr('cy', height / 2).attr('r', smallerCircleRadius).style('fill', 'none').style('stroke', 'rgba(64, 64, 64, 0.2)').style('stroke-width', '3');
 
-    plot.append('circle').attr('cx', width / 2).attr('cy', height / 2).attr('r', biggerCircleRadius).style('fill', 'none').style('stroke', 'rgba(64, 64, 64, 0.5)').style('stroke-width', '3');
+    plot.append('circle').attr('cx', width / 2).attr('cy', height / 2).attr('r', biggerCircleRadius).style('fill', 'none').style('stroke', 'rgba(64, 64, 64, 0.2)').style('stroke-width', '3');
 
     var link = plot.append('g').attr('class', 'links').selectAll('line').data(network.links).enter().append('line').attr('stroke-width', 0.5).attr('opacity', 0.5).attr('stroke', 'grey').attr('stroke-dasharray', function (d) {
         return d.isInvolvement ? '5, 7' : null;
     });
 
-    var node = plot.append('g').attr('class', 'nodes').selectAll('circle').data(network.nodes).enter().append('circle').attr('r', function (d) {
+    var node = plot.append('g').attr('class', 'nodes').selectAll('g.circleNodes').data(network.nodes).enter().append('g').classed('circleNodes', true).attr('transform', function (d) {
+        return 'translate(' + d.fx + ', ' + d.fy + ')';
+    });
+
+    node.append('circle').attr('r', function (d) {
         return d.level === 0 ? 25 : d.level === 1 ? 10 : 5;
     }).attr('fill', function (d) {
         return d.entityType.toLowerCase().trim() === 'person' ? 'rgb(175, 51, 53)' : 'rgb(64, 64, 64)';
-    }).attr('cx', function (d) {
-        return d.fx;
-    }).attr('cy', function (d) {
-        return d.fy;
-    }).on('mouseover', function (d) {
-        console.log(d);
+    }).attr('cx', 0).attr('cy', 0).on('click', function (d) {
+        window.location.replace('./single_node.html?id=' + d.number);
+    });
+    node.filter(function (d) {
+        return d.level === 1;
+    }).append('text').attr('x', 6).attr('y', -6).text(function (d) {
+        return d.Display_Name;
     });
 
     function ticked() {
-        node.attr('cx', function (d) {
-            return d.x;
-        }).attr('cy', function (d) {
-            return d.y;
+        node.attr('transform', function (d) {
+            return 'translate(' + d.x + ', ' + d.y + ')';
         });
         link.attr('x1', function (d) {
             return d.source.x;
