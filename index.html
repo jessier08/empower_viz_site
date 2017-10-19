@@ -16,27 +16,43 @@
 </head> 
     
 <body>
+
     
     <div id="landing_container">
         
-        <video autoplay loop id="landing_video">
+        <video autoplay loop id="landing_video" poster="imgs/poster.png">
             <source src="background_video.mp4" type="video/mp4">
         </video>
      
         <div id="landing_text">
             <div id="landing_title">
-                <img src="imgs/landing-06.png">
+                <img src="imgs/landing_title.png">
             </div>
 
             <div id="landing_enter">
-                <p>This community—the network of connections made possible by philanthropy—is evoked in this interactive network. We invite you to explore the connections made possible through Empower, and we thank you for the part you have played in making this community grow and thrive.
-                <p id="enter"><a href="full_network.html">ENTER</a></p>
+                <p>We invite you to explore the connections made possible through Empower, and we thank you for the part you have played in making this community grow and thrive.
+                <p id="enter"><a id="enter_link" href="">ENTER</a></p>
             </div>
         </div>
         
     </div>
         
+    <script>
+        var windowSize = $(window).width();
         
+        var mobile = "mobile.html";
+        var desktop = "full_network.html";
+        
+        function mobileFilter(){
+            if (windowSize <= 1024){
+                document.getElementById("enter_link").href = mobile;
+            } else {
+                document.getElementById("enter_link").href = desktop;
+            }
+        };
+        
+        mobileFilter();
+    </script>
  
 </body>
 
