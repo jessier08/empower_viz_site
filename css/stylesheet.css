@@ -143,7 +143,7 @@ a{
     max-height: 20vh;
 }
 .slidedown_theme{
-    max-height:90vh;
+    max-height:100vh;
 }
 
 .theme_description{
@@ -459,11 +459,11 @@ a{
 #landing_enter{
     font-family: "helvetica neue";
     font-size:2.5vh;
-    font-weight:450;
+    font-weight:500;
     color: rgb(64,64,64);
     padding-left:40vw;
-    padding-right:25vw;
-    line-height:3vh;
+    padding-right:23vw;
+    line-height:3.5vh;
 }
 #enter{
     padding-top:5vh;
@@ -490,6 +490,23 @@ a{
     #landing_video {
         height:100vh;
         width:auto;
+        margin-left:-40vw;
+    }
+    #landing_title img{
+        width:80vw;
+    }
+    #landing_title{
+        padding-left:10vw;
+        padding-top:20vh;
+    }
+    #landing_enter{
+        font-family: "helvetica neue";
+        font-size:2.25vh;
+        font-weight:500;
+        color: rgb(64,64,64);
+        padding-left:30vw;
+        padding-right:18vw;
+        line-height:3vh;
     }
 }
 
@@ -555,7 +572,7 @@ a{
 #view_desktop{
     color:rgb(207,10,44);
     font-family: "eames century modern";
-    font-size:2vh;
+    font-size:2.25vh;
     font-style:italic;
     text-align: center;
     height: 5vh;
@@ -596,6 +613,7 @@ a{
     font-weight: bold;
     padding-left:7.5vw;
     color: rgb(207,10,44);
+    margin-top:-1vh;
 }
 .mobile_quote{
     float:left;
