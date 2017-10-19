@@ -44,7 +44,10 @@ d3.json('./data/network.json', (err, data) => {
     const network = goTwoLevelsDeep(urlParams.id, data)
     // const network = goTwoLevelsDeep('NonPerson125', data)
 
+    let centralNode = data.nodes.filter(d => d.number === urlParams.id)
+
     // HIGHLIGHT THEMES
+<<<<<<< HEAD
     let centralNode = data.nodes.filter(d => d.number === urlParams.id)
     if (centralNode && centralNode.length) {
         centralNode = centralNode[0]
@@ -57,6 +60,10 @@ d3.json('./data/network.json', (err, data) => {
             d3.select('#entity_bio').text(centralNode['Bio'])
         }
 
+=======
+    if (centralNode && centralNode.length) {
+        centralNode = centralNode[0]
+>>>>>>> d22316886ac2a852e99dba7440a629408d1d598b
         const giveThemes = centralNode['Give_Receive_Link_Theme'].split(';').map(d => d.trim())
         let allThemes = new Set(centralNode.themes.concat(giveThemes).filter(d => d !== ''))
         allThemes = Array.from(allThemes)
@@ -69,6 +76,60 @@ d3.json('./data/network.json', (err, data) => {
                 .style('opacity', 1)
 
         })
+
+        // FILL DETAILS
+        console.log(centralNode)
+        d3.select('p#display_name').text(centralNode.Display_Name)
+        if (centralNode.entityType === 'person') {
+            d3.select('div#person_bio_text span#title')
+                .text(centralNode.Title)
+            d3.select('div#person_bio_text span#college')
+                .text(centralNode.College)
+            d3.select('div#person_bio_text span#degree')
+                .text(centralNode.Degree)
+            d3.select('div#person_bio_text span#major')
+                .text(centralNode.Major)
+            d3.select('div#person_bio_text span#vip')
+                .text(centralNode.VIP)
+            d3.select('div#person_bio_text span#hunt_100')
+                .text(centralNode.Huntington100)
+            d3.select('div#person_bio_text span#hunt_society')
+                .text(centralNode['Huntington Society'])
+        } else if (centralNode.entityType === 'non-person') {
+            d3.select('div#entity_bio_text span#entity_bio')
+                .text(centralNode.Bio)
+        }
+
+        if (centralNode.Quote !== '') {
+            d3.select('div#person_quote p')
+                .text(centralNode.Quote)
+        } else {
+            d3.select('div#person_quote').style('display', 'none')
+        }
+        
+        if (centralNode.Video && centralNode.Video !== '') {
+            d3.select('div#video_player video source')
+                .attr('src', centralNode.Video)
+        } else {
+            d3.select('div#video_player').style('display', 'none')
+        }
+
+        if (centralNode.Quote === '' && (!centralNode.Video || centralNode.Video === '')) {
+            for (var i = 0; i < network.nodes.length; ++i) {
+                const node = network.nodes[i]
+                if (node.number === centralNode.number) {
+                    continue
+                } else if (i > 2) {
+                    break
+                }
+
+                d3.select('img#related_' + (i + 1))
+                    .attr('src', '/imgs/person_photos/' + node.number + '_Photo.jpg')
+
+                d3.select('img#related_' + (i + 1) + '_name')
+                    .attr('name', node['Display_Name'])
+            }
+        }
     }
 
     simulation.nodes(network.nodes)
