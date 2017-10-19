@@ -128,7 +128,7 @@ d3.json('./data/network.json', (err, data) => {
         .attr('cy', height / 2)
         .attr('r', smallerCircleRadius)
         .style('fill', 'none')
-        .style('stroke', 'rgba(64, 64, 64, 0.5)')
+        .style('stroke', 'rgba(64, 64, 64, 0.2)')
         .style('stroke-width', '3')
 
     plot.append('circle')
@@ -136,7 +136,7 @@ d3.json('./data/network.json', (err, data) => {
         .attr('cy', height / 2)
         .attr('r', biggerCircleRadius)
         .style('fill', 'none')
-        .style('stroke', 'rgba(64, 64, 64, 0.5)')
+        .style('stroke', 'rgba(64, 64, 64, 0.2)')
         .style('stroke-width', '3')
 
     let link = plot.append('g')
