@@ -26,7 +26,7 @@ const biggerCircleRadius = d3.min([height, width]) * 0.4
 const smallerCircleRadius = biggerCircleRadius * 2 / 3
 
 const plot = svg.append('g')
-    .attr('transform', `translate(${margin.left}, ${margin.top})`)
+// .attr('transform', `translate(${margin.left}, ${margin.top})`)
 
 const simulation = d3.forceSimulation()
     .force('link', d3.forceLink().id((d) => { return d.number }).strength(0.1))
@@ -174,9 +174,10 @@ d3.json('./data/network.json', (err, data) => {
         })
     node.filter(d => d.level === 1)
         .append('text')
-        .attr('x', 6)
-        .attr('y', -6)
+        .attr('x', 7)
+        .attr('y', -7)
         .text(d => d.Display_Name)
+        .style('opacity', 0)
 
     function ticked () {
         node.attr('transform', d => `translate(${d.x}, ${d.y})`)
@@ -186,6 +187,11 @@ d3.json('./data/network.json', (err, data) => {
             .attr('y2', function (d) { return d.target.y })
     }
 })
+
+document.querySelector('div#toggle_labels label.switch input').onchange = function () {
+    plot.selectAll('text')
+        .style('opacity', this.checked ? 1 : 0)
+}
 
 function goTwoLevelsDeep (number, network) {
     const node = network.nodes.filter(d => d.number === number)[0]

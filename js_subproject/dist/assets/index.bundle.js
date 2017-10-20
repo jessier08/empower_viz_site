@@ -22853,22 +22853,19 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 function Autocomplete(nodes) {
     var options = {
         keys: ['Display_Name'],
-        id: 'number',
         threshhold: 0.0,
-        distance: 0
+        distance: 100
     };
 
     var Fuse = F.default;
     var fuse = new Fuse(nodes, options);
+    console.log(nodes);
     // returns only ids
     document.querySelector('#search_input').onkeyup = function () {
         if (this.value.length >= 3) {
-            var results = new Set(fuse.search(' ' + this.value));
-            results = nodes.filter(function (d) {
-                return results.has(d.number);
-            });
+            var results = fuse.search(this.value);
             var html = results.reduce(function (prev, curr) {
-                var li = '<a href="/single_node.html?id=' + curr.number + '"><li class="autocomplete_item">' + curr.Display_Name + '</li></a>';
+                var li = '<a href="/single_node.html?id=' + curr.number + '">\n                                <li class="autocomplete_item">\n                                    <span id="display_name">' + curr.Display_Name + '</span>' + (curr.College === '' ? '' : ', <span id="college">' + curr.College + '</span>') + (curr.Year === '' ? '' : ', <span id="year">' + curr.Year + '</span>') + '</li>\n                            </a>';
                 return prev + li;
             }, '');
             var rect = d3.select('#search_bar').node().getBoundingClientRect();
