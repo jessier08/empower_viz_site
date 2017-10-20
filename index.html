@@ -46,6 +46,12 @@
         function mobileFilter(){
             if (windowSize <= 1024){
                 document.getElementById("enter_link").href = mobile;
+                document.getElementById("landing_video")
+                    .style.display = "none";
+                document.getElementById("landing_container")
+                    .style.backgroundImage = "url('imgs/poster.png')";
+                document.getElementById("landing_container")
+                    .style.backgroundSize = "auto 100vh";
             } else {
                 document.getElementById("enter_link").href = desktop;
             }
