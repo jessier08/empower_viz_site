@@ -29,7 +29,7 @@ d3.json('./data/network.json', (err, networkData) => {
 
     // SETTING UP SEARCH
     Autocomplete(networkData.nodes)
-    // console.log(fuse.search('Charles'))
+    console.log(networkData.links)
 
     const linksG = plot.append('g')
         .attr('class', 'links')
@@ -117,7 +117,7 @@ d3.json('./data/network.json', (err, networkData) => {
         
         filters.forEach(theme => {
             d3.select('#' + theme.div).on('click', function () {
-                const links = networkData.links.filter(d => d.theme === theme.data)
+                const links = networkData.links.filter(d => d.theme && d.theme.toLowerCase() === theme.data)
                 const nodeIds = new Set(links.map(d => [d.source.number, d.target.number]).reduce((p, c) => p.concat(c), []))
                 const nodes = networkData.nodes.filter(d => (nodeIds.has(d.number)))
                 setTimeout(function () {

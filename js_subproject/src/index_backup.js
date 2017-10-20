@@ -20,142 +20,30 @@ const simulation = d3.forceSimulation()
     .force('y', d3.forceY().strength(0.1))
     // .force('y_', d3.forceY().strength(0.05).y(-height / 2))
 
-// d3.csv('./data/split_spouses.csv', parse, (err, data) => {
-//     if (err) {
-//         console.log(err)
-//         return
-//     }
-//     console.log(data[0])
-//     const networkData = createNetwork(data)
-//     console.log(networkData)
-d3.json('./data/network.json', (err, networkData) => {
+d3.csv('./data/final_data.csv', parse, (err, data) => {
     if (err) {
         console.log(err)
         return
     }
-    const linksG = plot.append('g')
-        .attr('class', 'links')
-    const nodesG = plot.append('g')
-        .attr('class', 'nodes')
-    const rectNodesG = plot.append('g')
-        .attr('class', 'rect-nodes')
+    console.log(data[0])
 
-    function visualise (network) {
-        function ticked () {
-            if (!ticked.count) {
-                ticked.count = 0
-                link.attr('x1', width / 2)
-                    .attr('y1', height / 2)
-                    .attr('x2', width / 2)
-                    .attr('y2', height / 2)
-
-                node.attr('cx', width / 2)
-                    .attr('cy', height / 2)
-
-                rectNode.transition()
-                    .attr('x', width / 2)
-                    .attr('y', height / 2)
-            }
-            ticked.count++
-
-            if (ticked.count === 5) {
-                ticked.count = 1
-                link // .transition().duration(50)
-                    .attr('x1', function (d) { return d.source.x })
-                    .attr('y1', function (d) { return d.source.y })
-                    .attr('x2', function (d) { return d.target.x })
-                    .attr('y2', function (d) { return d.target.y })
-
-                node // .transition().duration(50)
-                    .attr('cx', function (d) { return d.x })
-                    .attr('cy', function (d) { return d.y })
-
-                rectNode // .transition().duration(50)
-                    .attr('cx', function (d) { return d.x })
-                    .attr('cy', function (d) { return d.y })
-                    // .attr('x', function (d) { return d.x })
-                    // .attr('y', function (d) { return d.y })
+    // GIVE THEME EXCEL SHEET WAY
+    const x = {}
+    data.forEach(d => {
+        for (let i = 0; i < d.giveTo.length; ++i) {
+            if (i < d.giveTheme.length) {
+                x[d.giveTo[i]] = d.giveTheme[i]
             }
         }
-        function ended () {
-            simulation.alpha(0.1)
-            simulation.restart()
-        }
-        ticked.step = 5
-        simulation
-            .nodes(network.nodes)
-            .on('tick', ticked)
-            .on('end', ended)
+    })
+    // let y = ''
+    // for (let key in x) {
+    //     y += '"'+key + '","' + x[key] + '"\n'
+    // }
+    // console.log(y)
 
-        simulation.force('link')
-            .links(network.links)
-        simulation.alpha(1)
-        simulation.restart()
-
-        let link = linksG
-            .selectAll('line')
-            .data(network.links, d => d.source + '-' + d.target)
-        link.exit().remove()
-        link = link.enter()
-            .append('line')
-            .merge(link)
-        link.attr('stroke-width', 0.5)
-            .attr('opacity', 0.5)
-            .attr('stroke', 'rgba(64, 64, 64, 0.5)')
-            .attr('stroke-dasharray', d => d.isInvolvement ? '5, 7' : null)
-
-        let node = nodesG
-            .selectAll('circle')
-            .data(network.nodes.filter(d => d.entityType === 'person'), d => d.number)
-        node.exit().remove()
-        node = node.enter()
-            .append('circle')
-            .attr('r', 3)
-            .attr('fill', 'rgb(175, 51, 53)')
-            .merge(node)
-            .on('mouseover', (d) => {
-                console.log(d);
-            })
-
-        let rectNode = rectNodesG
-            .selectAll('circle')
-            .data(network.nodes.filter(d => d.entityType !== 'person'), d => d.number)
-        rectNode.exit().transition().style('opacity', 0).remove()
-        rectNode = rectNode.enter()
-            .append('circle')
-            .attr('r', 3)
-            .attr('fill', 'rgb(64, 64, 64)')
-            // .attr('width', 5)
-            // .attr('height', 5)
-            .merge(rectNode)
-            .on('mouseover', (d) => {
-                console.log(d);
-            })
-
-        const filters = [
-            {div: 'athletics', data: 'athletics'},
-            {div: 'student', data: 'student support'},
-            {div: 'campus', data: 'campus life'},
-            {div: 'entre', data: 'entrepreneurship'},
-            {div: 'research', data: 'research'},
-            {div: 'emerging', data: ''},
-            {div: 'faculty', data: 'faculty'}
-        ]
-        
-        filters.forEach(theme => {
-            d3.select('#' + theme.div).on('click', function () {
-                console.log(theme)
-                const nodes = networkData.nodes.filter(d => d.themes.indexOf(theme.data) !== -1)
-                const nodeIds = new Set(nodes.map(d => d.number))
-                const links = networkData.links.filter(d => (nodeIds.has(d.source) && nodeIds.has(d.target)))
-                setTimeout(function () {
-                    ticked.count = 0
-                    visualise({nodes: nodes, links: links})
-                }, 0)
-            })
-        })
-    }
-    visualise(networkData)
+    const networkData = createNetwork(data, x)
+    // console.log(networkData)
 })
 
 function parse (row) { // -> modified row
@@ -165,10 +53,11 @@ function parse (row) { // -> modified row
     row.entityType = row['Entity _Type'].toLowerCase().trim()
     row.number = row['Number'].trim()
     row.themes = row['Involvement_Link_Theme'].toLowerCase().split(';').map(d => d.trim())
+    row.giveTheme = !row['Give_Receive_Link_Theme'] || row['Give_Receive_Link_Theme'] === '' ? [] : row['Give_Receive_Link_Theme'].split(';').map(d => d.trim())
     return row
 }
 
-function createNetwork (data) {
+function createNetwork (data, giverThemes) {
     let receivers = new Set(), givers = new Set(), involvers = {}
     const links = [], nodes = {}
     // const allNodeIds = new Set(data.map(d => d.number))
@@ -177,19 +66,26 @@ function createNetwork (data) {
         nodes[node.number] = node
     })
 
+    const involvementLinkSet = new Set()
     data.forEach(d => {
         d.giveTo.forEach(e => receivers.add(e))
         d.receiveFrom.forEach(e => givers.add(e))
 
         // ADD INVOLVEMENT LINKS
-        d.involvementWith.forEach((e, i) => {
+        
+        for (let i = 0; i < d.involvementWith.length; ++i) {    
+            const e = d.involvementWith[i]
             let x = data.filter(f => f.number === e)
             if (x && x[0]) {
-                // TODO: filter to have only one connection between 
-                links.push({source: d.number, target: e, value: 5, isInvolvement: true, theme: d.themes.length > i ? d.themes[i] : ''})
+                if (!(involvementLinkSet.has(d.number + '-' + e) && involvementLinkSet.has(e + '-' + d.number))) {
+                    involvementLinkSet.add(d.number + '-' + e)
+                    links.push({source: d.number, target: e, isInvolvement: true, theme: d.themes.length > i ? d.themes[i] : ''})
+                }
             }
-        })
+        }
     })
+    // console.log(involvementLinkSet)
+    // debugger
 
     receivers = Array.from(receivers)
     givers = Array.from(givers)
@@ -231,7 +127,13 @@ function createNetwork (data) {
             for (let k = 0; k < receiverNodes.length; k++) {
                 const receiver = receiverNodes[k]
                 if (links.filter(d => (d.source === receiver.number && d.target === giver.number) || (d.source === giver.number && d.target === receiver.number) ).length === 0) {
-                    links.push({ source: giver.number, target: receiver.number, value: 5 })
+                    let theme = Array.from(new Set(giver.giveTo).intersection(new Set(receiver.receiveFrom)))
+                    if (theme.length > 0) {
+                        theme = theme[0]
+                    } else {
+                        theme = ''
+                    }
+                    links.push({ source: giver.number, target: receiver.number, theme: giverThemes[theme] })
                     nodes[giver.number] = giver
                     nodes[receiver.number] = receiver
                 }
@@ -242,4 +144,14 @@ function createNetwork (data) {
     var x = { links: links, nodes: Object.values(nodes) }
     console.log(JSON.stringify(x)) // THIS IS THE NETWORK SAVED IN network.json
     return x
+}
+
+Set.prototype.intersection = function (setB) {
+    var intersection = new Set();
+    for (var elem of setB) {
+        if (this.has(elem)) {
+            intersection.add(elem);
+        }
+    }
+    return intersection;
 }

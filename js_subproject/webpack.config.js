@@ -5,6 +5,7 @@ const path = require('path');
 
 module.exports = {
     entry: {
+        index_backup: './src/index_backup.js',
         index: './src/index.js',
         singleNode: './src/singleNode.js',
         theme: './src/theme.js'
