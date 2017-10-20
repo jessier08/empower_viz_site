@@ -102,7 +102,7 @@ d3.json('./data/network.json', (err, networkData) => {
             .attr('fill', d => d.entityType === 'person' ? 'rgb(175, 51, 53)' : 'rgb(64, 64, 64)')
             .merge(node)
             .on('click', (d) => {
-                window.location.replace('/single_node.html?id=' + d.number)
+                window.location.replace('./single_node.html?id=' + d.number)
             })
 
         const filters = [

@@ -23987,7 +23987,7 @@ d3.json('./data/network.json', function (err, networkData) {
         node = node.enter().append('circle').attr('r', 3).attr('fill', function (d) {
             return d.entityType === 'person' ? 'rgb(175, 51, 53)' : 'rgb(64, 64, 64)';
         }).merge(node).on('click', function (d) {
-            window.location.replace('/single_node.html?id=' + d.number);
+            window.location.replace('./single_node.html?id=' + d.number);
         });
 
         var filters = [{ div: 'athletics', data: 'athletics' }, { div: 'student', data: 'student support' }, { div: 'campus', data: 'campus life' }, { div: 'entre', data: 'entrepreneurship' }, { div: 'research', data: 'research' }, { div: 'emerging', data: 'emerging priorities' }, { div: 'faculty', data: 'faculty' }];

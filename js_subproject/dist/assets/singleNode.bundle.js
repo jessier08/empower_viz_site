@@ -23926,6 +23926,8 @@ var margin = { top: 50, right: 50, bottom: 50, left: 50 };
 var width = containerDiv.node().clientWidth;
 var height = containerDiv.node().clientHeight;
 var svg = containerDiv.append('svg').attr('width', width).attr('height', height);
+
+svg.append('def').append('mask').attr('id', 'mask').append('circle').attr('cx', width / 2).attr('cy', height / 2).attr('r', 25).style('stroke', 'none').style('fill', '#ffffff');
 var biggerCircleRadius = d3.min([height, width]) * 0.4;
 var smallerCircleRadius = biggerCircleRadius * 2 / 3;
 
@@ -23941,7 +23943,6 @@ d3.json('./data/network.json', function (err, data) {
         console.log(err);
         return;
     }
-    console.log(data);
     (0, _autocomplete.Autocomplete)(data.nodes);
     // Person357
     var network = goTwoLevelsDeep(urlParams.id, data);
@@ -24046,6 +24047,16 @@ d3.json('./data/network.json', function (err, data) {
     }).append('text').attr('x', 7).attr('y', -7).text(function (d) {
         return d.Display_Name;
     }).style('opacity', 0);
+
+    if (centralNode.Media !== '' || centralNode.entityType === 'person') {
+        var imageURL = './imgs/icons/person_icon.png';
+        if (centralNode.Media !== '' && centralNode.entityType === 'person') {
+            imageURL = './imgs/person_photos/' + centralNode.Media + '.jpg';
+        } else if (centralNode.Media !== '') {
+            imageURL = './imgs/icons/' + centralNode.Media + '.png';
+        }
+        svg.append('image').attr('xlink:href', imageURL).attr('x', width / 2 - 25).attr('y', height / 2 - 25).attr('width', '50px').attr('height', '50px').style('mask', 'url(#mask)');
+    }
 
     function ticked() {
         node.attr('transform', function (d) {

@@ -22,6 +22,16 @@ const height = containerDiv.node().clientHeight
 const svg = containerDiv.append('svg')
     .attr('width', width)
     .attr('height', height)
+
+svg.append('def')
+    .append('mask')
+    .attr('id', 'mask')
+    .append('circle')
+    .attr('cx', width / 2)
+    .attr('cy', height / 2)
+    .attr('r', 25)
+    .style('stroke', 'none')
+    .style('fill', '#ffffff')
 const biggerCircleRadius = d3.min([height, width]) * 0.4
 const smallerCircleRadius = biggerCircleRadius * 2 / 3
 
@@ -38,7 +48,6 @@ d3.json('./data/network.json', (err, data) => {
         console.log(err)
         return
     }
-    console.log(data)
     Autocomplete(data.nodes)
     // Person357
     const network = goTwoLevelsDeep(urlParams.id, data)
@@ -178,6 +187,22 @@ d3.json('./data/network.json', (err, data) => {
         .attr('y', -7)
         .text(d => d.Display_Name)
         .style('opacity', 0)
+
+    if (centralNode.Media !== '' || (centralNode.entityType === 'person')) {
+        let imageURL = './imgs/icons/person_icon.png'
+        if (centralNode.Media !== '' && centralNode.entityType === 'person') {
+            imageURL = './imgs/person_photos/' + centralNode.Media + '.jpg'
+        } else if (centralNode.Media !== '') {
+            imageURL = './imgs/icons/' + centralNode.Media + '.png'
+        }
+        svg.append('image')
+            .attr('xlink:href', imageURL)
+            .attr('x', width / 2 - 25)
+            .attr('y', height / 2 - 25)
+            .attr('width', '50px')
+            .attr('height', '50px')
+            .style('mask', 'url(#mask)')
+    }
 
     function ticked () {
         node.attr('transform', d => `translate(${d.x}, ${d.y})`)
