@@ -43,11 +43,7 @@ d3.json('./data/network.json', (err, data) => {
     // Person357
     const network = goTwoLevelsDeep(urlParams.id, data)
     // const network = goTwoLevelsDeep('NonPerson125', data)
-
-    let centralNode = data.nodes.filter(d => d.number === urlParams.id)
-
     // HIGHLIGHT THEMES
-<<<<<<< HEAD
     let centralNode = data.nodes.filter(d => d.number === urlParams.id)
     if (centralNode && centralNode.length) {
         centralNode = centralNode[0]
@@ -60,10 +56,6 @@ d3.json('./data/network.json', (err, data) => {
             d3.select('#entity_bio').text(centralNode['Bio'])
         }
 
-=======
-    if (centralNode && centralNode.length) {
-        centralNode = centralNode[0]
->>>>>>> d22316886ac2a852e99dba7440a629408d1d598b
         const giveThemes = centralNode['Give_Receive_Link_Theme'].split(';').map(d => d.trim())
         let allThemes = new Set(centralNode.themes.concat(giveThemes).filter(d => d !== ''))
         allThemes = Array.from(allThemes)

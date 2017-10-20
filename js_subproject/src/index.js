@@ -69,7 +69,7 @@ d3.json('./data/network.json', (err, networkData) => {
             simulation.alpha(0.1)
             simulation.restart()
         }
-        
+
         simulation
             .nodes(network.nodes)
             .on('tick', ticked)

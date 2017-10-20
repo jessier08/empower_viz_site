@@ -12,7 +12,6 @@
     
     <link href="css/stylesheet.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
 </head> 
     
 <body>
@@ -27,7 +26,7 @@
             <div class="fadeIn">
                 <p id="headline"></p>
                 <p id="story"></p>
-                <div>
+                <div id="div_quote">
                     <img src="imgs/quote.png" id="block_quote">
                     <p id="theme_quote"></p>
                 </div>
@@ -38,7 +37,7 @@
         <div id="story_visual">
             
             <video width="100%;"  autoplay>
-                <source src="" type="video/mp4"/>
+                <source id="video_source" src="" type="video/mp4"/>
             </video>
 
         </div>
@@ -59,15 +58,16 @@
             </div>
             <div id="story_navigation">
                 <p>more <span id="selected_theme"> </span> stories</p>
-                <img src="" class="active_story"><br>
+                <!-- <img src="" class="active_story"><br>
                 <img src="" class="inactive_story"><br>
                 <img src="" class="inactive_story"><br>
-                <img src="" class="inactive_story">
+                <img src="" class="inactive_story"> -->
             </div>
         </div>
     </div> 
 
-   
+    <script src="./js_subproject/dist/assets/theme.bundle.js"></script>
+   <!-- <script src="http://localhost:9000/assets/theme.bundle.js"></script> -->
 </body>
 
 </html>

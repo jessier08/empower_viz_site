@@ -23947,15 +23947,12 @@ d3.json('./data/network.json', function (err, data) {
     // Person357
     var network = goTwoLevelsDeep(urlParams.id, data);
     // const network = goTwoLevelsDeep('NonPerson125', data)
-
+    // HIGHLIGHT THEMES
     var centralNode = data.nodes.filter(function (d) {
         return d.number === urlParams.id;
     });
-
-    // HIGHLIGHT THEMES
     if (centralNode && centralNode.length) {
         centralNode = centralNode[0];
-<<<<<<< HEAD
 
         if (centralNode.entityType === 'person') {
             console.log(centralNode['person_bio_text']);
@@ -23965,8 +23962,6 @@ d3.json('./data/network.json', function (err, data) {
             d3.select('#entity_bio').text(centralNode['Bio']);
         }
 
-=======
->>>>>>> d22316886ac2a852e99dba7440a629408d1d598b
         var giveThemes = centralNode['Give_Receive_Link_Theme'].split(';').map(function (d) {
             return d.trim();
         });

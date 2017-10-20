@@ -6,7 +6,8 @@ const path = require('path');
 module.exports = {
     entry: {
         index: './src/index.js',
-        singleNode: './src/singleNode.js'
+        singleNode: './src/singleNode.js',
+        theme: './src/theme.js'
     },
     output: {
         path: path.join(__dirname, '/dist/assets'),
