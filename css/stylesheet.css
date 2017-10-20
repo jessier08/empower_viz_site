@@ -34,19 +34,20 @@ a{
 }
 #search_bar{
     width: 16vw;
-    height:3.5vh;
-    background-color: rgba(112,98,89,.1);
+    height:4vh;
+    background-color: rgb(240,240,240);
     float:right;
     margin-top:3vh;
     margin-right:60px;
     font-family:'helvetica neue';
-    font-size:1.25vh;
     display: flex;
 }
 #search_bar input{
     display:inline;
     background: rgba(0,0,0,0);
     border: none;
+    font-size:1.75vh;
+    color: rgb(64,64,64);
 }
 #search_bar input:focus{
     border: none;
@@ -59,11 +60,11 @@ a{
     padding-left:.5vw;
 }
 #search_autocomplete_container {
-    background: rgb(240, 239, 238);
+    background: rgb(240,240,240);
     position: absolute;
     right: 20px;
-    width: 130px;
-    max-height: 100%;
+    width: 16vw;
+    max-height: 40%;
     overflow-y: scroll;
     display: none;
     z-index: 999;
@@ -74,8 +75,13 @@ a{
 .autocomplete_item {
     list-style-type: none;
     font-family:'helvetica neue';
-    color: rgb(112, 98, 98);
-    padding: 5px;
+    font-size:1.75vh;
+    color: rgb(64,64,64);
+    padding-left: 1vw;
+    padding-top:.5vw;
+    padding-bottom: .5vw;
+    padding-right: 1vw;
+/*    padding: 5px;*/
     border-bottom: 1px solid lightgrey;
 }
 
@@ -283,8 +289,16 @@ a{
 /*single node styling*/
 #legend_sidebar{
     width:15vw;
-    position:fixed;
+    height:92vh;
     float:left;
+}
+@media only screen and (max-width: 1440px) {
+    #legend_sidebar{
+        position:absolute;
+    }
+    #single_node_diagram{
+        margin-left:-15vw;
+    }
 }
 #node_legend{
     width:7vw;
@@ -304,9 +318,8 @@ a{
 }
 
 #single_node_diagram{
-    width:55vw;
-    height:92vh;
-    position:fixed;
+    width:52vw;
+    height:85vh;
     float:left;
 }
 
@@ -449,7 +462,7 @@ a{
 
 #landing_title{
     padding-top:10vw;
-    padding-left:30vw;
+    padding-left:28vw;
     width:30vw;
 }
 #landing_title img{
@@ -461,8 +474,9 @@ a{
     font-size:2.5vh;
     font-weight:500;
     color: rgb(64,64,64);
-    padding-left:40vw;
-    padding-right:23vw;
+    padding-top:10vh;
+    padding-left:50vw;
+    padding-right:15vw;
     line-height:3.5vh;
 }
 #enter{
@@ -470,7 +484,6 @@ a{
     font-family: "helvetica neue";
     font-size:3vh;
     font-weight: bold;
-    float:right;
     padding-right:8vw;
     color: rgb(207,10,44);
 }
@@ -642,4 +655,8 @@ a{
 }
 .no_display{
     display:none;
+}
+#mobile_video{
+    width:85vw;
+    padding-left:5vw;
 }
