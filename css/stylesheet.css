@@ -1,4 +1,12 @@
 /*NU DONOR VIZ CSS*/
+@font-face{
+    font-family: "helvetica neue";
+    src: url('fonts/HelveticaNeueLTCom-Roman.ttf');
+}
+@font-face{
+    font-family: "eames century modern";
+    src: url('Eames Century Modern-Regular.WOFF');
+}
 body{
     margin: 0 auto;
 }
@@ -182,7 +190,6 @@ a{
     height:92vh;
     width:28vw;
     float:left; 
-    position:relative;
 }
 .fadeIn{
     opacity: 0;
@@ -240,9 +247,12 @@ a{
     height:92vh;
     width:56vw;
     float:left;
-    position:relative;
 }
-
+@media only screen and (max-width: 1440px) {
+    #left_sidebar{
+        position:absolute;
+    }
+}
 #right_sidebar{
     height:92vh;
     width:15vw;
@@ -319,13 +329,14 @@ a{
 
 #single_node_diagram{
     width:52vw;
-    height:85vh;
+    height:83vh;
     float:left;
+    margin-top:-2vh;
 }
-
 #info_sidebar{
     width:30vw;
-    float:right;
+    float:left;
+    position: relative;
 }
 #display_name{
     font-family: "helvetica neue";
@@ -399,44 +410,6 @@ a{
     padding-left:3vw;
     padding-right:2.5vw;
 }
-
-#related_nodes{
-    clear:both;
-    width:100%;
-    padding-top:10vh;
-    display:block;
-    padding-left:10vh;
-}
-.related_node {
-    clear:both;
-    padding-bottom:1.5vh;
-}
-#related_title{
-    font-family:"eames century modern";
-    font-size:2vh;
-    display:block;
-}
-#related_nodes img{
-    width: 3vw;
-    float:left;
-    padding-top:1vh;
-    padding-bottom:2vh;
-}
-#related_nodes span{
-    float:left;
-    font-family:"helvetica neue";
-    font-weight: bold;
-    font-size:1.5vh;
-    padding-top:2.5vh;
-    padding-left:1.5vh;
-}
-
-/*
-#video_player{
-    padding-left:2vw;
-    padding-top:20vh;
-}
-*/
 #video{
     width:27vw;
     padding-top:10vh;
@@ -659,4 +632,47 @@ a{
 #mobile_video{
     width:85vw;
     padding-left:5vw;
+}
+
+/*toggle styling*/
+#toggle_labels{
+    padding-top:20vh;
+    position:absolute;
+    left:60vw;
+    top:72vh;
+}
+#toggle{
+    font-family:"helvetica neue";
+    font-size:1.5vh;
+    color: rgba(112,98,89,.4);
+}
+.switch input {
+    position: absolute;
+    opacity: 0;
+}
+.switch {
+    display: inline-block;
+    font-size: 20px; /* 1 */
+    height: 1em;
+    width: 2em;
+    background: #BDB9A6;
+    border-radius: 1em;
+}
+
+.switch div {
+    height: .8em;
+    width: .8em;
+      border-radius: 1em;
+      background: #FFF;
+        border: .1em solid rgba(112,98,89,.5);
+    /*  box-shadow: 0 0.1em 0.3em rgba(0,0,0,0.3);*/
+      -webkit-transition: all 300ms;
+         -moz-transition: all 300ms;
+              transition: all 300ms;
+}
+
+.switch input:checked + div {
+  -webkit-transform: translate3d(100%, 0, 0);
+     -moz-transform: translate3d(100%, 0, 0);
+          transform: translate3d(100%, 0, 0);
 }
